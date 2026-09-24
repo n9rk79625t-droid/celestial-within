@@ -1,4 +1,4 @@
-const CACHE="celestial-within-v10";
+const CACHE="celestial-within-v11";
 const CORE=["./manifest.webmanifest","./icon-192.svg","./icon-512.svg"];
 self.addEventListener("install",e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)))});
 self.addEventListener("activate",e=>e.waitUntil(Promise.all([self.clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))])));
