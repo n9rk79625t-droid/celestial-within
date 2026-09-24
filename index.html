@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#281539">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.svg">
+<title>Celestial Within — Esoteric Zodiac Journal</title>
+<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+<style>
+:root{--night:#130d20;--plum:#281539;--violet:#6f4a91;--pink:#d98ab3;--rose:#f0bfd5;--gold:#d8b56c;--gold2:#f1d99b;--cream:#fff9f0;--ink:#2b2030;--muted:#7d6c82;--card:rgba(255,250,247,.95);--line:rgba(216,181,108,.35)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#3b2050 0,transparent 30%),radial-gradient(circle at 90% 20%,#4b2446 0,transparent 28%),var(--night);color:var(--cream);font-family:Inter,system-ui,sans-serif}
+body:before{content:"✦  ·  ✧  ·  ✦  ·  ☾  ·  ✧  ·  ✦";position:fixed;inset:18px 0 auto;text-align:center;letter-spacing:2.2rem;color:#ffffff22;pointer-events:none}
+header{position:sticky;top:0;z-index:9;background:#130d20e8;backdrop-filter:blur(12px);border-bottom:1px solid #d8b56c33;padding:13px 3vw;display:flex;gap:16px;align-items:center;justify-content:space-between}
+.brand{font:600 1.25rem Georgia,serif;color:var(--gold2)}nav{display:flex;gap:7px;flex-wrap:wrap}button,.btn{cursor:pointer;border:1px solid var(--line);background:#2b1939;color:var(--cream);border-radius:999px;padding:9px 13px}.btn.gold{background:linear-gradient(135deg,#b58b43,#e5c984);color:#26172e}
+main{max-width:1180px;margin:auto;padding:34px 20px 80px}.panel{display:none}.panel.active{display:block}.hero{min-height:55vh;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:30px}
+h1,h2,h3{font-family:Georgia,serif;font-weight:500}h1{font-size:clamp(2.5rem,6vw,5.2rem);line-height:.98;margin:.15em 0}.eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:.72rem;color:var(--gold)}
+.lead{max-width:720px;color:#e8dceb;line-height:1.75}.sigil{width:270px;height:270px;border:1px solid var(--gold);border-radius:50%;margin:auto;display:grid;place-items:center;position:relative;box-shadow:0 0 50px #d98ab322}.sigil:before,.sigil:after{content:"";position:absolute;inset:28px;border:1px solid #d98ab377;transform:rotate(45deg)}.sigil:after{inset:65px;transform:rotate(0);border-radius:50%}.sigil span{font-size:4rem;color:var(--gold2)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.card{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 15px 40px #0003}.card p{color:var(--muted);line-height:1.55}.card .eyebrow{color:#936a3b}
+section{margin:38px 0}.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px}.mini{font-size:.85rem;color:var(--muted)}.tile{background:linear-gradient(145deg,#fffaf8,#f7edf6);border:1px solid #d8b56c55;color:var(--ink);border-radius:17px;padding:15px;cursor:pointer;text-align:center}.tile b{display:block;font-family:Georgia,serif;margin:5px 0}
+label{display:block;font-size:.8rem;color:var(--muted);margin:11px 0 5px}input,textarea,select{width:100%;padding:11px;border:1px solid #ded2df;border-radius:11px;background:#fff;color:var(--ink);font:inherit}textarea{min-height:100px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.tabs button.active{background:var(--gold);color:#211329}.archive-item{border-top:1px solid #e8dfe8;padding:12px 0}.moonviz{width:150px;height:150px;border-radius:50%;margin:15px auto;background:#eee;box-shadow:0 0 35px #d8b56c66;position:relative;overflow:hidden}.moonshade{position:absolute;inset:0;background:#21152a;border-radius:50%;transform-origin:center}
+.chartwrap{display:grid;grid-template-columns:330px 1fr;gap:18px}.wheel{width:310px;height:310px;border:2px solid var(--gold);border-radius:50%;position:relative;margin:auto;background:radial-gradient(circle,#fff8 0 2px,transparent 3px),#24162f;color:var(--gold2)}.wheel:before,.wheel:after{content:"";position:absolute;inset:44px;border:1px solid #d98ab377;border-radius:50%}.wheel:after{inset:93px}.planetdot{position:absolute;width:34px;height:34px;margin:-17px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;background:#3c2449;color:white;font-size:17px}.houseLine{position:absolute;left:50%;top:50%;width:50%;height:1px;background:#d8b56c33;transform-origin:left}.notice{padding:12px;border-radius:12px;background:#f5edf6;color:#6e5770;font-size:.85rem}
+.crystals{letter-spacing:.5rem;color:var(--rose)}footer{text-align:center;padding:35px;color:#d7c5db}
+@media(max-width:820px){.hero,.chartwrap{grid-template-columns:1fr}.grid,.grid4{grid-template-columns:1fr 1fr}.sigil{width:190px;height:190px}.wheel{width:285px;height:285px}}@media(max-width:520px){.grid,.grid4,.two{grid-template-columns:1fr}nav{display:none}}
+
+.printbook{background:#fffaf5;color:#302337;border:1px solid #d8b56c55;border-radius:22px;padding:34px;margin-top:20px}
+.book-title{text-align:center;padding:24px;border-bottom:1px solid #d8b56c55;margin-bottom:22px}
+.book-entry{padding:20px 4px;border-bottom:1px solid #eadfea;break-inside:avoid}
+.book-entry h3{color:#694776}.book-entry .meta{color:#a07c48;font-size:.78rem;text-transform:uppercase;letter-spacing:.12em}
+@media print{
+ body *{visibility:hidden!important}
+ .print-target,.print-target *{visibility:visible!important}
+ .print-target{position:absolute!important;left:0;top:0;width:100%;background:white!important;color:#302337!important;border:none!important}
+ .print-target .book-entry{page-break-inside:avoid}
+}
+
+/* v4 mobile app + book design */
+:root{--safe-bottom:env(safe-area-inset-bottom,0px)}
+body{padding-bottom:calc(78px + var(--safe-bottom))}
+.mobile-bottom{display:none}
+.dashboard-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.dash-card{background:linear-gradient(145deg,#fffaf8,#f5e7f2);color:var(--ink);border:1px solid #d8b56c66;border-radius:22px;padding:18px;box-shadow:0 16px 40px #0003}
+.dash-card .glyph{font-size:2rem;color:#8c5d91}
+.install-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(120deg,#3b2250,#6a365f);border:1px solid #d8b56c66;border-radius:18px;padding:14px 16px;margin:14px 0}
+.house-selector{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.book-cover{min-height:720px;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 42%,#5a376d 0,#271632 48%,#140d1d 100%);color:#fff7ed;border:8px double #d8b56c;border-radius:10px;break-after:page}
+.book-cover:before,.book-cover:after{content:"";position:absolute;width:390px;height:390px;border:1px solid #d8b56c88;transform:rotate(45deg)}
+.book-cover:after{width:250px;height:250px;border-radius:50%;transform:none}
+.cover-inner{z-index:2;max-width:520px;padding:45px}.cover-moon{font-size:5rem;color:#f1d99b;text-shadow:0 0 25px #f0bfd5}.cover-crystal{font-size:2.4rem;letter-spacing:.45rem;color:#efc5df}.cover-title{font-size:3.7rem;margin:.2em 0;color:#fff9f0}.cover-sub{font:italic 1.15rem Georgia,serif;color:#ead9ec}
+.section-divider{min-height:330px;display:grid;place-items:center;text-align:center;border:1px solid #d8b56c77;margin:28px 0;padding:30px;background:linear-gradient(145deg,#fff9f5,#f4e8f4);break-before:page;break-after:avoid}
+.section-divider .symbol{font-size:3rem;color:#8d5a91}.celestial-rule{text-align:center;color:#b58b43;letter-spacing:.6rem;margin:20px 0}
+.chart-angles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.angle-pill{padding:10px;border:1px solid #d8b56c55;border-radius:12px;background:#fff8}
+@media(max-width:820px){
+ header nav{display:none}.mobile-bottom{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:50;bottom:0;left:0;right:0;padding:8px 8px calc(8px + var(--safe-bottom));background:#160f20f2;backdrop-filter:blur(16px);border-top:1px solid #d8b56c55}
+ .mobile-bottom button{border:0;background:transparent;padding:6px 2px;font-size:.7rem;border-radius:10px}.mobile-bottom button span{display:block;font-size:1.35rem;margin-bottom:2px}
+ main{padding-left:14px;padding-right:14px}.dashboard-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:430px){.dashboard-grid{grid-template-columns:1fr}.cover-title{font-size:2.7rem}}
+@media print{
+ @page{size:auto;margin:14mm}
+ .book-cover{min-height:245mm;border:5px double #b58b43!important}
+ .section-divider{min-height:190mm}
+ .book-entry{font-family:Georgia,serif;font-size:11pt;line-height:1.55}
+ .book-entry:before{content:"☾  ✦  ◇";display:block;text-align:center;color:#b58b43;margin-bottom:8px}
+}
+
+.natal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.natal-item{border:1px solid #d8b56c55;border-radius:12px;padding:10px;background:#fff8}
+.cal-entry{padding:15px 0;border-bottom:1px solid #eadfea}.cal-entry .datebadge{display:inline-block;border:1px solid #d8b56c77;border-radius:999px;padding:4px 9px;color:#936a3b;font-size:.75rem}
+.transit-card{background:linear-gradient(135deg,#f8ecf6,#fff9ef);border-left:4px solid #d8b56c}
+@media(max-width:520px){.natal-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="brand">✧ Celestial Within</div><nav id="nav"></nav></header>
+<main>
+<div id="home" class="panel active">
+ <div id="installBanner" class="install-banner"><div><b>Install Celestial Within</b><div class="mini" style="color:#ead9ec">Add this journal to your phone for an app-like, offline-ready experience.</div></div><button id="installBtn" class="btn gold" onclick="installApp()">Install</button></div>
+ <div class="hero"><div><div class="eyebrow">An esoteric reflection sanctuary</div><h1>As above,<br>so within.</h1><p class="lead">Explore your natal chart, the houses, planets, lunar rhythms, tarot practice, seasonal celebrations, and the traditions you create along the way.</p><button class="btn gold" onclick="show('today')">Open Today’s Temple ✦</button><p class="crystals">◇ ✧ ◈ ✦ ◇</p></div><div class="sigil"><span>☿</span></div></div>
+ <section><div class="eyebrow">Your sanctuary</div><h2>Home Dashboard</h2><div id="personalGreeting" class="card" style="margin-bottom:14px"><div class="eyebrow">Personal sky note</div><h3>Complete your Birth Profile</h3><p>Save your birth information to connect current transits with your natal houses.</p><button onclick="show('profile')">Create profile</button></div>
+<div class="dashboard-grid">
+ <div class="dash-card" onclick="show('today')"><div class="glyph">☉</div><h3>Today’s Sky</h3><p>Live planets, Moon phase, Ascendant and house wheel.</p></div>
+ <div class="dash-card" onclick="show('moon')"><div class="glyph">☾</div><h3>Moon Temple</h3><p>Current phase, lunar journal and traditions.</p></div>
+ <div class="dash-card" onclick="show('tarot')"><div class="glyph">✦</div><h3>Daily Tarot</h3><p>Card, meditation and reflection practice.</p></div>
+ <div class="dash-card" onclick="show('journalbook')"><div class="glyph">◇</div><h3>My Journal Book</h3><p>Turn your saved writing into a beautiful printable book.</p></div>
+ </div></section>
+ <section><div class="eyebrow">Paths of study</div><h2>Your journeys</h2><div class="grid">
+  <div class="card"><h3>Journey Through the Signs</h3><p>Twelve archetypes for self-reflection, including affirmations, ritual and prompts.</p><button onclick="show('signs')">Enter</button></div>
+  <div class="card"><h3>Journey Through the Houses</h3><p>Explore the twelve areas of lived experience and how your natal placements express through them.</p><button onclick="show('houses')">Enter</button></div>
+  <div class="card"><h3>Journey Through the Planets</h3><p>Meet the planetary archetypes as symbolic functions: identity, feeling, communication, desire, growth and more.</p><button onclick="show('planets')">Enter</button></div>
+ </div></section>
+ <section><div class="eyebrow">Practice & remembrance</div><h2>Living journal</h2><div class="grid">
+  <div class="card"><h3>Moon Temple</h3><p>Live phase, phase tracker, reflective spell-inspired practices, meditations, journal and traditions.</p><button onclick="show('moon')">Open</button></div>
+  <div class="card"><h3>Wheel of the Year</h3><p>Track sabbats and esbats, plan celebrations, journal your experiences and preserve family or personal traditions.</p><button onclick="show('wheel')">Open</button></div>
+  <div class="card"><h3>Tarot Temple</h3><p>Record a daily card, reflect on its symbolism, meditate with it, and archive meaningful practices.</p><button onclick="show('tarot')">Open</button></div>
+ </div></section>
+</div>
+
+
+<div id="profile" class="panel">
+ <div class="eyebrow">Your celestial profile</div><h1>Birth Profile</h1>
+ <div class="card">
+  <p>Enter your birth information once. It is stored locally on this device in this prototype and used to personalize your natal snapshot, transit prompts and exported journal cover.</p>
+  <div class="two"><div><label>Name for journal cover</label><input id="profileName" data-save="profile-name" placeholder="Your name"></div><div><label>Birth date</label><input id="birthDate" type="date" data-save="birth-date"></div></div>
+  <div class="two"><div><label>Birth time</label><input id="birthTime" type="time" data-save="birth-time"></div><div><label>Birth place label</label><input id="birthPlace" data-save="birth-place" placeholder="City, state/country"></div></div>
+  <div class="two"><div><label>Birth latitude</label><input id="birthLat" data-save="birth-lat" placeholder="Latitude"></div><div><label>Birth longitude</label><input id="birthLon" data-save="birth-lon" placeholder="Longitude"></div></div>
+  <div class="two"><div><label>UTC offset at birth</label><input id="birthOffset" type="number" step=".25" data-save="birth-offset" placeholder="-5"></div><div><label>House system</label><select id="birthHouseSystem" data-save="birth-house"><option value="whole">Whole Sign</option><option value="equal">Equal House</option></select></div></div>
+  <button class="btn gold" onclick="saveProfile()">Save & Generate Natal Snapshot</button>
+  <p class="mini">For exact historical timezone/DST handling, enter the UTC offset that applied at the birthplace on the birth date. A production version should replace this manual field with a timezone database/geocoder.</p>
+ </div>
+ <section><div id="natalSnapshot" class="card"></div></section>
+</div>
+
+<div id="today" class="panel"><div class="eyebrow">Daily information</div><h1>Today’s Sky</h1>
+ <div class="card" style="margin-bottom:18px">
+  <h3>Personalize the chart with your location</h3>
+  <p>For accurate local chart angles and houses, allow your device to share its current location. Your coordinates stay in this browser storage in this prototype and are used for chart calculations.</p>
+  <button class="btn gold" onclick="requestLocation()">Use My Current Location</button>
+  <span id="locationStatus" class="mini"></span>
+  <div class="two"><div><label>Latitude</label><input id="latitude" data-save="latitude" placeholder="e.g. 42.68"></div><div><label>Longitude</label><input id="longitude" data-save="longitude" placeholder="e.g. -89.02"></div></div>
+  <div class="house-selector"><label style="margin:0">House system</label>
+<select id="houseSystem" style="max-width:220px" onchange="renderSky()"><option value="whole">Whole Sign</option><option value="equal">Equal House</option></select></div>
+<p class="mini">With location permission, this version calculates the local Ascendant and Midheaven and draws location-based Whole Sign or Equal houses. Planetary positions come from Astronomy Engine.</p>
+<div id="chartAngles" class="chart-angles"></div>
+ </div>
+ <div class="chartwrap"><div class="card"><div id="astroWheel" class="wheel"></div><p class="mini">The wheel shows current geocentric planetary zodiac longitudes. After you share a location, the house sectors are calculated from the local Ascendant using your selected Whole Sign or Equal House system.</p></div>
+ <div><div class="card"><h3 id="todayDate"></h3><div id="planetTable"></div></div><div class="card" style="margin-top:16px"><h3>Live Moon</h3><div class="moonviz"><div id="moonShade" class="moonshade"></div></div><h2 id="moonName" style="text-align:center"></h2><p id="moonInfo" style="text-align:center"></p></div></div></div>
+</div>
+
+<div id="signs" class="panel"><div class="eyebrow">Journey I</div><h1>Through the Signs</h1><div id="signGrid" class="grid4"></div></div>
+<div id="houses" class="panel"><div class="eyebrow">Journey II</div><h1>Through the Houses</h1><div id="houseGrid" class="grid"></div></div>
+<div id="planets" class="panel"><div class="eyebrow">Journey III</div><h1>Through the Planets</h1><div id="planetGrid" class="grid"></div></div>
+
+<div id="moon" class="panel"><div class="eyebrow">Lunar practice</div><h1>Moon Temple</h1><div id="moonCurrent"></div>
+ <div class="grid"><div class="card"><h3>Moon Practice Ideas</h3><p><b>New:</b> write one intention and choose one grounded action.</p><p><b>Waxing:</b> build, practice, nourish momentum.</p><p><b>Full:</b> illuminate what has become visible; gratitude and release reflection.</p><p><b>Waning:</b> simplify, integrate, rest, clear your space.</p></div>
+ <div class="card"><h3>Meditation Ideas</h3><p>Moon-breath meditation • candle-gaze reflection • body scan • visualization of releasing or receiving • silent observation outdoors.</p></div>
+ <div class="card"><h3>Moon Journal</h3><label>Date / phase</label><input data-save="moon-date"><label>What am I noticing?</label><textarea data-save="moon-journal"></textarea><label>Practice or ritual</label><textarea data-save="moon-practice"></textarea></div></div>
+ <section><div class="card"><h3>Archive a Moon Tradition</h3><input id="moonTradName" placeholder="Tradition name"><textarea id="moonTradText" placeholder="What do you do? Why does it matter?"></textarea><button onclick="archive('moon')">Archive tradition</button><div id="moonArchive"></div></div></section>
+</div>
+
+<div id="wheel" class="panel"><div class="eyebrow">Seasonal & lunar observance</div><h1>Esbats + Sabbats</h1><div class="notice">Celebration ideas here are offered as reflective, symbolic practices. Traditions vary widely across Pagan and witchcraft paths, so use what fits your own practice and sources.</div>
+ <section><h2>Wheel of the Year</h2><div id="sabbatGrid" class="grid4"></div></section>
+ <section><div class="grid"><div class="card"><h3>Celebration Ideas</h3><p>Seasonal meal • nature walk • altar refresh • gratitude list • art or music • family story night • decorate with seasonal plants and colors.</p></div><div class="card"><h3>Spell-inspired Ideas</h3><p>Write-and-release reflection • intention candle used safely • blessing poem • symbolic knot or ribbon intention • gratitude charm made from paper or natural keepsakes.</p></div><div class="card"><h3>Celebration / Practice Journal</h3><label>Observance</label><input data-save="wheel-name"><label>What I did</label><textarea data-save="wheel-journal"></textarea><label>What I want to remember</label><textarea data-save="wheel-memory"></textarea></div></div></section>
+ <section><div class="card"><h3>Traditions Archive</h3><input id="wheelTradName" placeholder="Tradition name"><textarea id="wheelTradText" placeholder="Describe the tradition and its meaning."></textarea><button onclick="archive('wheel')">Archive tradition</button><div id="wheelArchive"></div></div></section>
+</div>
+
+<div id="tarot" class="panel"><div class="eyebrow">Daily divination journal</div><h1>Tarot Temple</h1>
+ <div class="grid"><div class="card"><h3>Daily Card</h3><label>Date</label><input type="date" data-save="tarot-date"><label>Card drawn</label><input data-save="tarot-card" placeholder="e.g., The Star"><label>First impression</label><textarea data-save="tarot-first"></textarea><label>How did this show up today?</label><textarea data-save="tarot-journal"></textarea></div>
+ <div class="card"><h3>Practice Ideas</h3><p>Place the card where you can see it while journaling. Write one quality from the card you want to embody. Create a small symbolic drawing inspired by its imagery. At day’s end, note where its theme appeared.</p><h3>Meditation Ideas</h3><p>Visual journey into the card • three-minute symbol focus • breathe while observing one color or object • imagine asking the card’s figure one reflective question.</p></div>
+ <div class="card"><h3>Tarot Reflection</h3><div class="prompt"><b>Prompt</b><p>What does this card help me notice that I might otherwise overlook?</p></div><label>My interpretation</label><textarea data-save="tarot-meaning"></textarea></div></div>
+ <section><div class="card"><h3>Tarot Traditions Archive</h3><input id="tarotTradName" placeholder="Tradition name"><textarea id="tarotTradText" placeholder="A spread, meditation, seasonal draw, or personal practice you want to keep."></textarea><button onclick="archive('tarot')">Archive tradition</button><div id="tarotArchive"></div></div></section>
+</div>
+
+
+
+<div id="calendar" class="panel">
+ <div class="eyebrow">Reflection history</div><h1>Journal Calendar</h1>
+ <div class="card"><div class="two"><div><label>Entry date</label><input id="calendarDate" type="date"></div><div><label>Journal type</label><select id="calendarType"><option>General</option><option>Moon</option><option>Tarot</option><option>Seasonal</option><option>Transit</option></select></div></div>
+ <label>Title</label><input id="calendarTitle" placeholder="A few words for this day">
+ <label>Entry</label><textarea id="calendarText" placeholder="What would you like to remember?"></textarea>
+ <button class="btn gold" onclick="saveCalendarEntry()">Save dated entry</button></div>
+ <section><div class="card"><div class="section-head"><div><div class="eyebrow">Past entries</div><h2>Calendar Archive</h2></div><input id="calendarMonth" type="month" style="max-width:180px" onchange="renderCalendar()"></div><div id="calendarEntries"></div></div></section>
+</div>
+
+<div id="journalbook" class="panel">
+ <div class="eyebrow">Collected reflections</div><h1>My Celestial Journal</h1>
+ <div class="card"><p>Your saved Moon, Tarot, Wheel-of-the-Year, sign, house and planet reflections are gathered here into one printable journal.</p>
+ <button class="btn gold" onclick="buildJournalBook()">Refresh Journal</button>
+ <button class="btn" onclick="printSection('journalPrint')">Print / Save as PDF</button></div>
+ <section id="journalPrint" class="printbook"></section>
+</div>
+
+<div id="traditionsbook" class="panel">
+ <div class="eyebrow">Living archive</div><h1>Book of Traditions</h1>
+ <div class="card"><p>Your archived Moon, seasonal and Tarot traditions are kept separate from your everyday journal so they can become a beautiful record of the practices you return to.</p>
+ <button class="btn gold" onclick="buildTraditionsBook()">Refresh Archive</button>
+ <button class="btn" onclick="printSection('traditionsPrint')">Print / Save as PDF</button></div>
+ <section id="traditionsPrint" class="printbook"></section>
+</div>
+
+<div id="detail" class="panel"><button onclick="history.back();show(lastPanel)">← Back</button><div id="detailContent"></div></div>
+</main><div class="mobile-bottom">
+<button onclick="show('home')"><span>⌂</span>Home</button>
+<button onclick="show('today')"><span>☉</span>Sky</button>
+<button onclick="show('moon')"><span>☾</span>Moon</button>
+<button onclick="show('tarot')"><span>✦</span>Tarot</button>
+<button onclick="show('journalbook')"><span>◇</span>Journal</button>
+</div><footer>✦ ☾ ◇ Celestial Within ◇ ☽ ✦<br><span class="mini" style="color:#cdbbd0">Astrology, tarot and ritual content is presented as a reflective/spiritual framework, not scientific prediction.</span></footer>
+<script>
+const signs=[["♈","Aries","Initiation","Fire · Cardinal · Mars"],["♉","Taurus","Embodiment","Earth · Fixed · Venus"],["♊","Gemini","Curiosity","Air · Mutable · Mercury"],["♋","Cancer","Nurture","Water · Cardinal · Moon"],["♌","Leo","Creative radiance","Fire · Fixed · Sun"],["♍","Virgo","Refinement","Earth · Mutable · Mercury"],["♎","Libra","Relationship","Air · Cardinal · Venus"],["♏","Scorpio","Transformation","Water · Fixed · Mars / Pluto"],["♐","Sagittarius","Expansion","Fire · Mutable · Jupiter"],["♑","Capricorn","Structure","Earth · Cardinal · Saturn"],["♒","Aquarius","Vision","Air · Fixed · Saturn / Uranus"],["♓","Pisces","Mysticism","Water · Mutable · Jupiter / Neptune"]];
+const houses=[["1st","Self & emergence","How do I enter life and initiate experience?"],["2nd","Values & resources","What do I value, cultivate and sustain?"],["3rd","Mind & communication","How do I learn, speak and relate to my immediate world?"],["4th","Roots & inner home","What creates belonging and emotional foundation?"],["5th","Creativity & joy","How do I play, create and express my heart?"],["6th","Practice & daily life","What habits support my wellbeing and craft?"],["7th","Partnership","What do relationships mirror and teach me?"],["8th","Depth & exchange","How do I meet intimacy, change and shared resources?"],["9th","Meaning & horizons","What expands my worldview and sense of meaning?"],["10th","Calling & visibility","What do I want to build or contribute publicly?"],["11th","Community & future","Where do I belong, collaborate and imagine change?"],["12th","Inner world & surrender","What becomes visible in solitude, dreams and closure?"]];
+const planets=[["☉","Sun","Identity & vitality"],["☽","Moon","Feeling & instinct"],["☿","Mercury","Mind & communication"],["♀","Venus","Values & relating"],["♂","Mars","Drive & assertion"],["♃","Jupiter","Growth & meaning"],["♄","Saturn","Structure & responsibility"],["♅","Uranus","Change & individuation"],["♆","Neptune","Imagination & permeability"],["♇","Pluto","Depth & transformation"]];
+const sabbats=[["Samhain","Oct 31","Ancestors, endings, remembrance"],["Yule","Winter Solstice","Stillness, returning light, renewal"],["Imbolc","Feb 1–2","Cleansing, inspiration, first stirrings"],["Ostara","Spring Equinox","Balance, growth, beginnings"],["Beltane","May 1","Vitality, creativity, flourishing"],["Litha","Summer Solstice","Radiance, abundance, fullness"],["Lughnasadh","Aug 1","First harvest, skill, gratitude"],["Mabon","Autumn Equinox","Balance, harvest, preparation"]];
+let lastPanel="home";
+const pages=[["Home","home"],["Profile","profile"],["Today","today"],["Signs","signs"],["Houses","houses"],["Planets","planets"],["Moon","moon"],["Esbats + Sabbats","wheel"],["Tarot","tarot"],["Calendar","calendar"],["Journal Book","journalbook"],["Traditions Book","traditionsbook"]];
+document.getElementById("nav").innerHTML=pages.map(x=>`<button onclick="show('${x[1]}')">${x[0]}</button>`).join("");
+function show(id){document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));let el=document.getElementById(id);if(el){el.classList.add("active");lastPanel=id;window.scrollTo(0,0)} if(id==="today")renderSky();if(id==="profile")renderNatalSnapshot();if(id==="calendar")renderCalendar();if(id==="home")renderPersonalDashboard();if(id==="moon")renderMoon();if(id==="journalbook")buildJournalBook();if(id==="traditionsbook")buildTraditionsBook();renderArchives();bind()}
+function detail(kind,i){let d;if(kind==="sign"){d=signs[i];document.getElementById("detailContent").innerHTML=`<div class="eyebrow">${d[0]} ${d[3]}</div><h1>${d[1]}</h1><div class="card"><h3>${d[2]}</h3><p>Explore where ${d[1]} appears in your natal chart by planet and house. Use the archetype as a question rather than a fixed label.</p><label>Where does this energy feel familiar?</label><textarea data-save="detail-${kind}-${i}-1"></textarea><label>Where does it challenge me?</label><textarea data-save="detail-${kind}-${i}-2"></textarea><label>What would a balanced expression look like?</label><textarea data-save="detail-${kind}-${i}-3"></textarea></div>`}
+if(kind==="house"){d=houses[i];document.getElementById("detailContent").innerHTML=`<div class="eyebrow">${d[0]} House</div><h1>${d[1]}</h1><div class="card"><p>${d[2]}</p><label>Planets/signs in this house</label><textarea data-save="detail-${kind}-${i}-1"></textarea><label>What life themes do I notice here?</label><textarea data-save="detail-${kind}-${i}-2"></textarea><label>Growth reflection</label><textarea data-save="detail-${kind}-${i}-3"></textarea></div>`}
+if(kind==="planet"){d=planets[i];document.getElementById("detailContent").innerHTML=`<div class="eyebrow">${d[0]} Planetary archetype</div><h1>${d[1]}</h1><div class="card"><h3>${d[2]}</h3><p>Reflect on your natal ${d[1]} by sign, house and aspects, and compare the symbolism with your lived experience.</p><label>My natal placement</label><input data-save="detail-${kind}-${i}-1"><label>How does this function express in me?</label><textarea data-save="detail-${kind}-${i}-2"></textarea><label>What am I learning about it?</label><textarea data-save="detail-${kind}-${i}-3"></textarea></div>`}
+show("detail")}
+document.getElementById("signGrid").innerHTML=signs.map((x,i)=>`<div class="tile" onclick="detail('sign',${i})"><span style="font-size:1.7rem">${x[0]}</span><b>${x[1]}</b><span class="mini">${x[2]}</span></div>`).join("");
+document.getElementById("houseGrid").innerHTML=houses.map((x,i)=>`<div class="card"><div class="eyebrow">${x[0]} House</div><h3>${x[1]}</h3><p>${x[2]}</p><button onclick="detail('house',${i})">Reflect</button></div>`).join("");
+document.getElementById("planetGrid").innerHTML=planets.map((x,i)=>`<div class="card"><div style="font-size:2rem;color:#9b6a8e">${x[0]}</div><h3>${x[1]}</h3><p>${x[2]}</p><button onclick="detail('planet',${i})">Reflect</button></div>`).join("");
+document.getElementById("sabbatGrid").innerHTML=sabbats.map(x=>`<div class="tile"><b>${x[0]}</b><span class="mini">${x[1]}</span><p>${x[2]}</p></div>`).join("");
+function bind(){document.querySelectorAll("[data-save]").forEach(el=>{let k="cw-"+el.dataset.save;if(localStorage.getItem(k)!=null)el.value=localStorage.getItem(k);el.oninput=()=>localStorage.setItem(k,el.value)})}
+function archive(type){let n=document.getElementById(type+"TradName"),t=document.getElementById(type+"TradText");if(!n.value.trim())return;let a=JSON.parse(localStorage.getItem("cw-archive-"+type)||"[]");a.unshift({name:n.value,text:t.value,date:new Date().toLocaleDateString()});localStorage.setItem("cw-archive-"+type,JSON.stringify(a));n.value=t.value="";renderArchives()}
+function renderArchives(){["moon","wheel","tarot"].forEach(type=>{let el=document.getElementById(type+"Archive");if(!el)return;let a=JSON.parse(localStorage.getItem("cw-archive-"+type)||"[]");el.innerHTML=a.map(x=>`<div class="archive-item"><b>${x.name}</b> <span class="mini">${x.date}</span><p>${x.text}</p></div>`).join("")})}
+function zodiacName(lon){return signs[Math.floor(((lon%360)+360)%360/30)][1]}
+function phaseName(a){let names=["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"];return names[Math.floor(((a+22.5)%360)/45)%8]}
+function fallbackPhase(){let syn=29.53058867, known=Date.UTC(2000,0,6,18,14), days=(Date.now()-known)/86400000, age=((days%syn)+syn)%syn;return age/syn*360}
+function moonData(){let a;try{a=Astronomy.MoonPhase(new Date())}catch(e){a=fallbackPhase()}return {angle:a,name:phaseName(a),illum:(1-Math.cos(a*Math.PI/180))/2}}
+function renderMoon(){let m=moonData();document.getElementById("moonCurrent").innerHTML=`<div class="card"><div class="eyebrow">Current phase</div><h2>${m.name}</h2><p>Approx. ${(m.illum*100).toFixed(0)}% illuminated. Use the phase as a reflective rhythm rather than a prediction.</p></div>`}
+
+function norm360(x){return ((x%360)+360)%360}
+function deg2rad(x){return x*Math.PI/180}
+function rad2deg(x){return x*180/Math.PI}
+function julianDate(date){return date.getTime()/86400000+2440587.5}
+function obliquity(jd){let T=(jd-2451545.0)/36525;return 23.43929111-0.013004167*T}
+function gmstDegrees(jd){let T=(jd-2451545.0)/36525;return norm360(280.46061837+360.98564736629*(jd-2451545)+0.000387933*T*T-T*T*T/38710000)}
+function localAngles(date,lat,lon){
+ let jd=julianDate(date),theta=deg2rad(norm360(gmstDegrees(jd)+lon)),phi=deg2rad(lat),eps=deg2rad(obliquity(jd));
+ // MC: ecliptic longitude intersecting local meridian.
+ let mc=norm360(rad2deg(Math.atan2(Math.sin(theta)*Math.cos(eps)+Math.tan(phi)*Math.sin(eps)*0,Math.cos(theta))));
+ // Ascendant formula; choose eastern horizon intersection.
+ let asc=norm360(rad2deg(Math.atan2(-Math.cos(theta),Math.sin(theta)*Math.cos(eps)+Math.tan(phi)*Math.sin(eps))));
+ asc=norm360(asc+180);
+ // More stable MC expression independent of latitude.
+ mc=norm360(rad2deg(Math.atan2(Math.sin(theta)*Math.cos(eps),Math.cos(theta))));
+ return {asc,mc,desc:norm360(asc+180),ic:norm360(mc+180)};
+}
+function houseCusps(asc,system){
+ let c=[],base=system==="whole"?Math.floor(asc/30)*30:asc;
+ for(let i=0;i<12;i++)c.push(norm360(base+i*30));return c;
+}
+function fmtZodiac(lon){let s=signs[Math.floor(norm360(lon)/30)][1],d=norm360(lon)%30;return `${s} ${d.toFixed(1)}°`}
+let deferredInstallPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;let b=document.getElementById("installBanner");if(b)b.style.display="flex"});
+async function installApp(){if(deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null}else{alert("On iPhone/iPad: open the Share menu in Safari and choose “Add to Home Screen.” On supported Android browsers, use the browser’s Install/Add to Home Screen option.")}}
+if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost"))window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+
+function renderSky(){document.getElementById("todayDate").textContent=new Date().toLocaleString([], {dateStyle:"full",timeStyle:"short"});let m=moonData();document.getElementById("moonName").textContent=m.name;document.getElementById("moonInfo").textContent=`Approximately ${(m.illum*100).toFixed(1)}% illuminated`;let shade=document.getElementById("moonShade");let x=Math.cos(m.angle*Math.PI/180)*75;shade.style.transform=`translateX(${x}px)`;let wheel=document.getElementById("astroWheel");wheel.innerHTML="";
+let lat=parseFloat(localStorage.getItem("cw-latitude")),lon=parseFloat(localStorage.getItem("cw-longitude")),system=(document.getElementById("houseSystem")||{}).value||"whole";
+let cusps=Array.from({length:12},(_,i)=>i*30),angles=null;
+if(isFinite(lat)&&isFinite(lon)){angles=localAngles(new Date(),lat,lon);cusps=houseCusps(angles.asc,system);let ca=document.getElementById("chartAngles");if(ca)ca.innerHTML=`<div class="angle-pill"><b>ASC</b><br>${fmtZodiac(angles.asc)}</div><div class="angle-pill"><b>MC</b><br>${fmtZodiac(angles.mc)}</div><div class="angle-pill"><b>DSC</b><br>${fmtZodiac(angles.desc)}</div><div class="angle-pill"><b>IC</b><br>${fmtZodiac(angles.ic)}</div>`}
+cusps.forEach((c,i)=>{let l=document.createElement("div");l.className="houseLine";l.style.transform=`rotate(${c}deg)`;l.title=`House ${i+1}: ${fmtZodiac(c)}`;wheel.appendChild(l)});
+let bodyMap=[["Sun","☉"],["Moon","☽"],["Mercury","☿"],["Venus","♀"],["Mars","♂"],["Jupiter","♃"],["Saturn","♄"],["Uranus","♅"],["Neptune","♆"],["Pluto","♇"]], rows=[];
+bodyMap.forEach(([name,g],idx)=>{let lon=null;try{lon=name==="Moon"?Astronomy.EclipticLongitude(Astronomy.Body.Moon,new Date()):Astronomy.EclipticLongitude(Astronomy.Body[name],new Date())}catch(e){try{let v=Astronomy.GeoVector(Astronomy.Body[name],new Date(),true);let ec=Astronomy.Ecliptic(v);lon=ec.elon}catch(_){}}
+if(lon!=null&&isFinite(lon)){let r=118+(idx%2)*16,ang=(lon-90)*Math.PI/180,x=155+r*Math.cos(ang),y=155+r*Math.sin(ang),d=document.createElement("div");d.className="planetdot";d.style.left=x+"px";d.style.top=y+"px";d.title=name+" "+lon.toFixed(1)+"°";d.textContent=g;wheel.appendChild(d);rows.push(`<p><b>${g} ${name}</b> — ${zodiacName(lon)} ${((((lon%30)+30)%30)).toFixed(1)}°</p>`)}});
+if(!rows.length)rows.push("<p>Live planetary calculations need an internet connection the first time this file loads so its astronomy library can load.</p>");document.getElementById("planetTable").innerHTML=rows.join("")}
+
+
+function birthDateUTC(){
+ let d=(document.getElementById("birthDate")||{}).value||localStorage.getItem("cw-birth-date"),t=(document.getElementById("birthTime")||{}).value||localStorage.getItem("cw-birth-time")||"12:00",off=parseFloat((document.getElementById("birthOffset")||{}).value||localStorage.getItem("cw-birth-offset")||"0");
+ if(!d)return null;let [Y,M,D]=d.split("-").map(Number),[h,m]=t.split(":").map(Number);return new Date(Date.UTC(Y,M-1,D,h-off,m||0));
+}
+function planetLongitudes(date){
+ let bodyMap=[["Sun","☉"],["Moon","☽"],["Mercury","☿"],["Venus","♀"],["Mars","♂"],["Jupiter","♃"],["Saturn","♄"],["Uranus","♅"],["Neptune","♆"],["Pluto","♇"]],out=[];
+ bodyMap.forEach(([name,g])=>{let lon=null;try{lon=Astronomy.EclipticLongitude(Astronomy.Body[name],date)}catch(e){try{let v=Astronomy.GeoVector(Astronomy.Body[name],date,true);lon=Astronomy.Ecliptic(v).elon}catch(_){}}
+ if(lon!=null&&isFinite(lon))out.push({name,g,lon:norm360(lon)})});return out;
+}
+function houseOfLongitude(lon,cusps){
+ for(let i=0;i<12;i++){let a=cusps[i],b=cusps[(i+1)%12],span=norm360(b-a),rel=norm360(lon-a);if(rel<span||Math.abs(rel-span)<.0001)return i+1}return 1;
+}
+function getNatal(){
+ let date=birthDateUTC(),lat=parseFloat(localStorage.getItem("cw-birth-lat")),lon=parseFloat(localStorage.getItem("cw-birth-lon")),system=localStorage.getItem("cw-birth-house")||"whole";
+ if(!date||!isFinite(lat)||!isFinite(lon))return null;let ang=localAngles(date,lat,lon),cusps=houseCusps(ang.asc,system),pls=planetLongitudes(date);return {date,lat,lon,system,ang,cusps,pls};
+}
+function saveProfile(){bind();["profile-name","birth-date","birth-time","birth-place","birth-lat","birth-lon","birth-offset","birth-house"].forEach(k=>{let el=document.querySelector(`[data-save="${k}"]`);if(el)localStorage.setItem("cw-"+k,el.value)});renderNatalSnapshot();renderPersonalDashboard()}
+function renderNatalSnapshot(){
+ let el=document.getElementById("natalSnapshot");if(!el)return,n=getNatal();
+ if(!n){el.innerHTML="<h3>Natal Snapshot</h3><p>Add birth date/time, coordinates and UTC offset above to generate your saved chart snapshot.</p>";return}
+ let name=localStorage.getItem("cw-profile-name")||"Your",place=localStorage.getItem("cw-birth-place")||"birthplace";
+ el.innerHTML=`<div class="eyebrow">${esc(name)}'s natal chart</div><h2>Natal Snapshot</h2><p>${esc(place)} · ASC ${fmtZodiac(n.ang.asc)} · MC ${fmtZodiac(n.ang.mc)}</p><div class="natal-grid">`+
+ n.pls.map(p=>`<div class="natal-item"><b>${p.g} ${p.name}</b><br>${fmtZodiac(p.lon)}<br><span class="mini">House ${houseOfLongitude(p.lon,n.cusps)}</span></div>`).join("")+`</div>`;
+}
+function transitPrompt(planet,house){
+ let themes={1:"identity, beginnings and how you meet the world",2:"values, resources and self-worth",3:"communication, learning and your immediate environment",4:"home, roots and emotional foundations",5:"creativity, joy and self-expression",6:"daily rhythms, service and wellbeing",7:"partnership and what relationships mirror",8:"shared resources, intimacy and transformation",9:"meaning, study and wider horizons",10:"calling, visibility and long-term direction",11:"community, friendship and future vision",12:"rest, dreams, closure and your inner world"};
+ return `With ${planet} moving through your ${house}${house===1?"st":house===2?"nd":house===3?"rd":"th"} house, you might reflect on ${themes[house]}. What feels especially alive or noticeable here today?`;
+}
+function renderPersonalDashboard(){
+ let el=document.getElementById("personalGreeting");if(!el)return,n=getNatal(),name=localStorage.getItem("cw-profile-name")||"";
+ if(!n){el.innerHTML=`<div class="eyebrow">Personal sky note</div><h3>Complete your Birth Profile</h3><p>Save your birth information to connect current transits with your natal houses.</p><button onclick="show('profile')">Create profile</button>`;return}
+ let cur=planetLongitudes(new Date()),moon=cur.find(x=>x.name==="Moon"),sun=cur.find(x=>x.name==="Sun"),mh=moon?houseOfLongitude(moon.lon,n.cusps):null,sh=sun?houseOfLongitude(sun.lon,n.cusps):null;
+ el.className="card transit-card";el.innerHTML=`<div class="eyebrow">${name?esc(name)+" · ":""}Today’s personalized sky</div><h3>${moon?`☾ Moon transiting your ${mh}${mh===1?"st":mh===2?"nd":mh===3?"rd":"th"} house`:"Current transits"}</h3><p>${moon?transitPrompt("the Moon",mh):""}</p>${sun?`<p class="mini">☉ Sun: ${fmtZodiac(sun.lon)} · natal house ${sh}</p>`:""}<button onclick="show('today')">View today’s sky</button>`;
+}
+function saveCalendarEntry(){
+ let d=document.getElementById("calendarDate").value||new Date().toISOString().slice(0,10),type=document.getElementById("calendarType").value,title=document.getElementById("calendarTitle").value,text=document.getElementById("calendarText").value;
+ if(!text.trim())return;let a=JSON.parse(localStorage.getItem("cw-calendar")||"[]");a.unshift({d,type,title,text});localStorage.setItem("cw-calendar",JSON.stringify(a));document.getElementById("calendarTitle").value="";document.getElementById("calendarText").value="";renderCalendar();
+}
+function renderCalendar(){
+ let el=document.getElementById("calendarEntries");if(!el)return,a=JSON.parse(localStorage.getItem("cw-calendar")||"[]"),m=(document.getElementById("calendarMonth")||{}).value;
+ if(m)a=a.filter(x=>x.d.startsWith(m));el.innerHTML=a.length?a.map(x=>`<article class="cal-entry"><span class="datebadge">${esc(x.d)} · ${esc(x.type)}</span><h3>${esc(x.title||"Journal Entry")}</h3><p>${esc(x.text).replace(/\n/g,"<br>")}</p></article>`).join(""):`<p class="mini">No dated entries in this view yet.</p>`;
+}
+
+function requestLocation(){
+ let s=document.getElementById("locationStatus");
+ if(!navigator.geolocation){s.textContent=" Location is not supported by this browser.";return}
+ s.textContent=" Requesting permission…";
+ navigator.geolocation.getCurrentPosition(pos=>{
+   let lat=pos.coords.latitude.toFixed(5),lon=pos.coords.longitude.toFixed(5);
+   document.getElementById("latitude").value=lat;document.getElementById("longitude").value=lon;
+   localStorage.setItem("cw-latitude",lat);localStorage.setItem("cw-longitude",lon);
+   s.textContent=" Location saved for this journal.";renderSky();
+ },err=>{s.textContent=" Location was not shared. You can enter coordinates manually."},{enableHighAccuracy:false,timeout:10000,maximumAge:3600000})
+}
+function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function prettyKey(k){return k.replace(/^cw-/,"").replace(/detail-/,"").replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase())}
+function journalEntries(){
+ let skip=["cw-latitude","cw-longitude","cw-season"];
+ let arr=[];
+ for(let i=0;i<localStorage.length;i++){
+   let k=localStorage.key(i),v=localStorage.getItem(k);
+   if(!k||!k.startsWith("cw-")||k.startsWith("cw-archive-")||skip.includes(k)||!v||!v.trim())continue;
+   arr.push({key:k,value:v});
+ }
+ return arr.sort((a,b)=>a.key.localeCompare(b.key));
+}
+function bookCover(title,subtitle){
+ let d=new Date().toLocaleDateString([], {year:"numeric",month:"long"});
+ let pname=localStorage.getItem("cw-profile-name")||"";let owner=pname?`<p>Created for ${esc(pname)}</p>`:"";return `<div class="book-cover"><div class="cover-inner"><div class="cover-crystal">◇ ◈ ◇</div><div class="cover-moon">☾</div><h1 class="cover-title">${title}</h1><div class="cover-sub">${subtitle}</div><div class="celestial-rule">✦ ☿ ✧ ♀ ✧ ☽ ✦</div><p>${d}</p>${owner}</div></div>`;
+}
+function divider(title,symbol,subtitle){
+ return `<div class="section-divider"><div><div class="symbol">${symbol}</div><div class="eyebrow">Celestial Within</div><h1>${title}</h1><p>${subtitle||""}</p><div class="celestial-rule">◇ ✦ ☾ ✦ ◇</div></div></div>`;
+}
+function buildJournalBook(){
+ let el=document.getElementById("journalPrint");if(!el)return;
+ let a=journalEntries(), groups={Moon:[],Tarot:[],Seasonal:[],Signs:[],Houses:[],Planets:[],Dated:[],Other:[]};let dated=JSON.parse(localStorage.getItem("cw-calendar")||"[]");dated.forEach(x=>a.push({key:`cw-Dated-${x.d}-${x.type}-${x.title||"Entry"}`,value:x.text}));
+ a.forEach(x=>{let k=x.key.toLowerCase(),g=k.includes("moon")?"Moon":k.includes("tarot")?"Tarot":k.includes("wheel")?"Seasonal":k.includes("detail-sign")?"Signs":k.includes("detail-house")?"Houses":k.includes("detail-planet")?"Planets":k.includes("dated-")?"Dated":"Other";groups[g].push(x)});
+ let body=bookCover("My Celestial Journal","A personal book of reflection, cycles & inner knowing");
+ Object.entries(groups).forEach(([g,items])=>{if(!items.length)return;let sym={Moon:"☾",Tarot:"✦",Seasonal:"❈",Signs:"♈",Houses:"⌂",Planets:"☿",Dated:"☾",Other:"◇"}[g];body+=divider(g,sym,`Collected ${g.toLowerCase()} reflections`)+items.map(x=>`<article class="book-entry"><div class="meta">${esc(prettyKey(x.key))}</div><p>${esc(x.value).replace(/\n/g,"<br>")}</p></article>`).join("")});
+ if(!a.length)body+=`<p class="mini">Your saved journal entries will appear here as you write throughout the app.</p>`;
+ el.innerHTML=body;
+}
+function buildTraditionsBook(){
+ let el=document.getElementById("traditionsPrint");if(!el)return;
+ let groups=[["Moon Traditions","moon","☾"],["Seasonal & Sabbat Traditions","wheel","❈"],["Tarot Traditions","tarot","✦"]];
+ let body=bookCover("Book of Traditions","A living archive of the rituals and practices I return to");
+ groups.forEach(([title,type,sym])=>{
+   let a=JSON.parse(localStorage.getItem("cw-archive-"+type)||"[]");
+   body+=divider(title,sym,"Practices preserved with intention");
+   body+=a.length?a.map(x=>`<article class="book-entry"><div class="meta">${esc(x.date)}</div><h3>${esc(x.name)}</h3><p>${esc(x.text).replace(/\n/g,"<br>")}</p></article>`).join(""):`<p class="mini">No archived traditions yet.</p>`;
+ });
+ el.innerHTML=body;
+}
+function printSection(id){
+ let el=document.getElementById(id);if(!el)return;
+ el.classList.add("print-target");window.print();setTimeout(()=>el.classList.remove("print-target"),500);
+}
+
+bind();renderArchives();renderPersonalDashboard();let cd=document.getElementById("calendarDate");if(cd)cd.value=new Date().toISOString().slice(0,10);
+</script>
+</body></html>

@@ -1,0 +1,23 @@
+{
+  "name": "Celestial Within",
+  "short_name": "Celestial",
+  "description": "Personalized astrology, Moon, tarot, traditions and printable spiritual journal.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#130d20",
+  "theme_color": "#281539",
+  "icons": [
+    {
+      "src": "icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
