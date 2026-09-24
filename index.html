@@ -40,7 +40,7 @@ label{display:block;font-size:.8rem;color:var(--muted);margin:11px 0 5px}input,t
 /* v4 mobile app + book design */
 :root{--safe-bottom:env(safe-area-inset-bottom,0px)}
 body{padding-bottom:calc(78px + var(--safe-bottom))}
-.mobile-bottom{display:none}
+.mobile-bottom{display:none}.menu-toggle{display:none}
 .dashboard-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 .dash-card{background:linear-gradient(145deg,#fffaf8,#f5e7f2);color:var(--ink);border:1px solid #d8b56c66;border-radius:22px;padding:18px;box-shadow:0 16px 40px #0003}
 .dash-card .glyph{font-size:2rem;color:#8c5d91}
@@ -54,7 +54,10 @@ body{padding-bottom:calc(78px + var(--safe-bottom))}
 .section-divider .symbol{font-size:3rem;color:#8d5a91}.celestial-rule{text-align:center;color:#b58b43;letter-spacing:.6rem;margin:20px 0}
 .chart-angles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.angle-pill{padding:10px;border:1px solid #d8b56c55;border-radius:12px;background:#fff8}
 @media(max-width:820px){
- header nav{display:flex;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}header{align-items:flex-start;flex-direction:column}header nav button{white-space:nowrap;flex:0 0 auto}.mobile-bottom{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:50;bottom:0;left:0;right:0;padding:8px 8px calc(8px + var(--safe-bottom));background:#160f20f2;backdrop-filter:blur(16px);border-top:1px solid #d8b56c55}
+ header{align-items:stretch;flex-direction:row;flex-wrap:wrap}.brand{align-self:center}.menu-toggle{display:block;margin-left:auto}
+ header nav{display:none;width:100%;overflow:visible;flex-direction:column;gap:6px;padding:10px 0 2px}
+ header nav.open{display:flex}header nav button{white-space:normal;width:100%;text-align:left;padding:11px 14px}
+ .mobile-bottom{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:50;bottom:0;left:0;right:0;padding:8px 8px calc(8px + var(--safe-bottom));background:#160f20f2;backdrop-filter:blur(16px);border-top:1px solid #d8b56c55}
  .mobile-bottom button{border:0;background:transparent;padding:6px 2px;font-size:.7rem;border-radius:10px}.mobile-bottom button span{display:block;font-size:1.35rem;margin-bottom:2px}
  main{padding-left:14px;padding-right:14px}.dashboard-grid{grid-template-columns:1fr 1fr}
 }
@@ -74,7 +77,7 @@ body{padding-bottom:calc(78px + var(--safe-bottom))}
 </style>
 </head>
 <body>
-<header><div class="brand">✧ Celestial Within</div><nav id="nav"></nav></header>
+<header><div class="brand">✧ Celestial Within</div><button id="menuToggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav" onclick="toggleMenu()">☰ Menu</button><nav id="nav"></nav></header>
 <main>
 <div id="home" class="panel active">
  <div id="installBanner" class="install-banner"><div><b>Install Celestial Within</b><div class="mini" style="color:#ead9ec">Add this journal to your phone for an app-like, offline-ready experience.</div></div><button id="installBtn" class="btn gold" onclick="installApp()">Install</button></div>
@@ -196,7 +199,9 @@ const sabbats=[["Samhain","Oct 31","Ancestors, endings, remembrance"],["Yule","W
 let lastPanel="home";
 const pages=[["Home","home"],["Profile","profile"],["Today","today"],["Signs","signs"],["Houses","houses"],["Planets","planets"],["Moon","moon"],["Esbats + Sabbats","wheel"],["Tarot","tarot"],["Calendar","calendar"],["Journal Book","journalbook"],["Traditions Book","traditionsbook"]];
 document.getElementById("nav").innerHTML=pages.map(x=>`<button onclick="show('${x[1]}')">${x[0]}</button>`).join("");
-function show(id){document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));let el=document.getElementById(id);if(el){el.classList.add("active");lastPanel=id;window.scrollTo(0,0)} if(id==="today")renderSky();if(id==="profile")renderNatalSnapshot();if(id==="calendar")renderCalendar();if(id==="home")renderPersonalDashboard();if(id==="moon")renderMoon();if(id==="journalbook")buildJournalBook();if(id==="traditionsbook")buildTraditionsBook();renderArchives();bind()}
+function toggleMenu(){let n=document.getElementById("nav"),b=document.getElementById("menuToggle");if(!n)return;n.classList.toggle("open");if(b)b.setAttribute("aria-expanded",n.classList.contains("open")?"true":"false")}
+function closeMenu(){let n=document.getElementById("nav"),b=document.getElementById("menuToggle");if(n)n.classList.remove("open");if(b)b.setAttribute("aria-expanded","false")}
+function show(id){closeMenu();document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));let el=document.getElementById(id);if(el){el.classList.add("active");lastPanel=id;window.scrollTo(0,0)} if(id==="today")renderSky();if(id==="profile")renderNatalSnapshot();if(id==="calendar")renderCalendar();if(id==="home")renderPersonalDashboard();if(id==="moon")renderMoon();if(id==="journalbook")buildJournalBook();if(id==="traditionsbook")buildTraditionsBook();renderArchives();bind()}
 function detail(kind,i){let d;if(kind==="sign"){d=signs[i];document.getElementById("detailContent").innerHTML=`<div class="eyebrow">${d[0]} ${d[3]}</div><h1>${d[1]}</h1><div class="card"><h3>${d[2]}</h3><p>Explore where ${d[1]} appears in your natal chart by planet and house. Use the archetype as a question rather than a fixed label.</p><label>Where does this energy feel familiar?</label><textarea data-save="detail-${kind}-${i}-1"></textarea><label>Where does it challenge me?</label><textarea data-save="detail-${kind}-${i}-2"></textarea><label>What would a balanced expression look like?</label><textarea data-save="detail-${kind}-${i}-3"></textarea></div>`}
 if(kind==="house"){d=houses[i];document.getElementById("detailContent").innerHTML=`<div class="eyebrow">${d[0]} House</div><h1>${d[1]}</h1><div class="card"><p>${d[2]}</p><label>Planets/signs in this house</label><textarea data-save="detail-${kind}-${i}-1"></textarea><label>What life themes do I notice here?</label><textarea data-save="detail-${kind}-${i}-2"></textarea><label>Growth reflection</label><textarea data-save="detail-${kind}-${i}-3"></textarea></div>`}
 if(kind==="planet"){d=planets[i];document.getElementById("detailContent").innerHTML=`<div class="eyebrow">${d[0]} Planetary archetype</div><h1>${d[1]}</h1><div class="card"><h3>${d[2]}</h3><p>Reflect on your natal ${d[1]} by sign, house and aspects, and compare the symbolism with your lived experience.</p><label>My natal placement</label><input data-save="detail-${kind}-${i}-1"><label>How does this function express in me?</label><textarea data-save="detail-${kind}-${i}-2"></textarea><label>What am I learning about it?</label><textarea data-save="detail-${kind}-${i}-3"></textarea></div>`}
