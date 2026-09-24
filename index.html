@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#281539">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.svg">
 <title>Celestial Within — Esoteric Zodiac Journal</title>
@@ -13,7 +13,7 @@
 :root{--night:#130d20;--plum:#281539;--violet:#6f4a91;--pink:#d98ab3;--rose:#f0bfd5;--gold:#d8b56c;--gold2:#f1d99b;--cream:#fff9f0;--ink:#2b2030;--muted:#7d6c82;--card:rgba(255,250,247,.95);--line:rgba(216,181,108,.35)}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#3b2050 0,transparent 30%),radial-gradient(circle at 90% 20%,#4b2446 0,transparent 28%),var(--night);color:var(--cream);font-family:Inter,system-ui,sans-serif}
 body:before{content:"✦  ·  ✧  ·  ✦  ·  ☾  ·  ✧  ·  ✦";position:fixed;inset:18px 0 auto;text-align:center;letter-spacing:2.2rem;color:#ffffff22;pointer-events:none}
-header{position:sticky;top:0;z-index:9;background:#130d20e8;backdrop-filter:blur(12px);border-bottom:1px solid #d8b56c33;padding:13px 3vw;display:flex;gap:16px;align-items:center;justify-content:space-between}
+header{position:sticky;top:0;z-index:9;padding-top:calc(13px + env(safe-area-inset-top,0px));background:#130d20e8;backdrop-filter:blur(12px);border-bottom:1px solid #d8b56c33;padding-right:3vw;padding-bottom:13px;padding-left:3vw;display:flex;gap:16px;align-items:center;justify-content:space-between}
 .brand{font:600 1.25rem Georgia,serif;color:var(--gold2)}nav{display:flex;gap:7px;flex-wrap:wrap}button,.btn{cursor:pointer;border:1px solid var(--line);background:#2b1939;color:var(--cream);border-radius:999px;padding:9px 13px}.btn.gold{background:linear-gradient(135deg,#b58b43,#e5c984);color:#26172e}
 main{max-width:1180px;margin:auto;padding:34px 20px 80px}.panel{display:none}.panel.active{display:block}.hero{min-height:55vh;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:30px}
 h1,h2,h3{font-family:Georgia,serif;font-weight:500}h1{font-size:clamp(2.5rem,6vw,5.2rem);line-height:.98;margin:.15em 0}.eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:.72rem;color:var(--gold)}
@@ -109,9 +109,9 @@ body{padding-bottom:calc(78px + var(--safe-bottom))}
   <div class="two"><div><label>Name for journal cover</label><input id="profileName" data-save="profile-name" placeholder="Your name"></div><div><label>Birth date</label><input id="birthDate" type="date" data-save="birth-date"></div></div>
   <div class="two"><div><label>Birth time</label><input id="birthTime" type="time" data-save="birth-time"></div><div><label>Birth place label</label><input id="birthPlace" data-save="birth-place" placeholder="City, state/country"></div></div>
   <div class="two"><div><label>Birth latitude</label><input id="birthLat" data-save="birth-lat" placeholder="Latitude"></div><div><label>Birth longitude</label><input id="birthLon" data-save="birth-lon" placeholder="Longitude"></div></div>
-  <div class="two"><div><label>UTC offset at birth</label><input id="birthOffset" type="number" step=".25" data-save="birth-offset" placeholder="-5"></div><div><label>House system</label><select id="birthHouseSystem" data-save="birth-house"><option value="whole">Whole Sign</option><option value="equal">Equal House</option></select></div></div>
+  <div class="two"><div><label>Birth timezone</label><input id="birthTimezone" data-save="birth-timezone" placeholder="e.g., America/Chicago"><button type="button" style="margin-top:8px" onclick="detectBirthTimezone()">Use this device timezone</button><input id="birthOffset" type="hidden" data-save="birth-offset"></div><div><label>House system</label><select id="birthHouseSystem" data-save="birth-house"><option value="whole">Whole Sign</option><option value="equal">Equal House</option></select></div></div>
   <button class="btn gold" onclick="saveProfile()">Save & Generate Natal Snapshot</button>
-  <p class="mini">For exact historical timezone/DST handling, enter the UTC offset that applied at the birthplace on the birth date. A production version should replace this manual field with a timezone database/geocoder.</p>
+  <p class="mini">Timezone is handled automatically from an IANA timezone name, including historical daylight-saving rules supported by your browser. Use “Use this device timezone” when the birth location shares your current timezone. Birthplace-to-timezone lookup can be added later so the city itself fills this automatically.</p>
  </div>
  <section><div id="natalSnapshot" class="card"></div></section>
 </div>
@@ -257,9 +257,11 @@ if(lon!=null&&isFinite(lon)){let r=118+(idx%2)*16,ang=(lon-90)*Math.PI/180,x=155
 if(!rows.length)rows.push("<p>Live planetary calculations need an internet connection the first time this file loads so its astronomy library can load.</p>");document.getElementById("planetTable").innerHTML=rows.join("")}
 
 
+function offsetForZone(date,zone){try{let parts=new Intl.DateTimeFormat("en-US",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"}).formatToParts(date);let p=Object.fromEntries(parts.map(x=>[x.type,x.value]));let asUTC=Date.UTC(+p.year,+p.month-1,+p.day,+p.hour,+p.minute,+p.second);return (asUTC-date.getTime())/3600000}catch(e){return null}}
+function detectBirthTimezone(){let z=Intl.DateTimeFormat().resolvedOptions().timeZone||"";let el=document.getElementById("birthTimezone");if(el){el.value=z;localStorage.setItem("cw-birth-timezone",z)}}
 function birthDateUTC(){
  let d=(document.getElementById("birthDate")||{}).value||localStorage.getItem("cw-birth-date"),t=(document.getElementById("birthTime")||{}).value||localStorage.getItem("cw-birth-time")||"12:00",off=parseFloat((document.getElementById("birthOffset")||{}).value||localStorage.getItem("cw-birth-offset")||"0");
- if(!d)return null;let [Y,M,D]=d.split("-").map(Number),[h,m]=t.split(":").map(Number);return new Date(Date.UTC(Y,M-1,D,h-off,m||0));
+ if(!d)return null;let [Y,M,D]=d.split("-").map(Number),[h,m]=t.split(":").map(Number),zone=(document.getElementById("birthTimezone")||{}).value||localStorage.getItem("cw-birth-timezone")||"";if(zone){let guess=new Date(Date.UTC(Y,M-1,D,h,m||0));let zoff=offsetForZone(guess,zone);if(zoff!=null){let corrected=new Date(Date.UTC(Y,M-1,D,h-zoff,m||0));let zoff2=offsetForZone(corrected,zone);if(zoff2!=null)return new Date(Date.UTC(Y,M-1,D,h-zoff2,m||0))}}return new Date(Date.UTC(Y,M-1,D,h-off,m||0));
 }
 function planetLongitudes(date){
  let bodyMap=[["Sun","☉"],["Moon","☽"],["Mercury","☿"],["Venus","♀"],["Mars","♂"],["Jupiter","♃"],["Saturn","♄"],["Uranus","♅"],["Neptune","♆"],["Pluto","♇"]],out=[];
@@ -273,7 +275,7 @@ function getNatal(){
  let date=birthDateUTC(),lat=parseFloat(localStorage.getItem("cw-birth-lat")),lon=parseFloat(localStorage.getItem("cw-birth-lon")),system=localStorage.getItem("cw-birth-house")||"whole";
  if(!date||!isFinite(lat)||!isFinite(lon))return null;let ang=localAngles(date,lat,lon),cusps=houseCusps(ang.asc,system),pls=planetLongitudes(date);return {date,lat,lon,system,ang,cusps,pls};
 }
-function saveProfile(){bind();["profile-name","birth-date","birth-time","birth-place","birth-lat","birth-lon","birth-offset","birth-house"].forEach(k=>{let el=document.querySelector(`[data-save="${k}"]`);if(el)localStorage.setItem("cw-"+k,el.value)});renderNatalSnapshot();renderPersonalDashboard()}
+function saveProfile(){bind();["profile-name","birth-date","birth-time","birth-place","birth-lat","birth-lon","birth-timezone","birth-offset","birth-house"].forEach(k=>{let el=document.querySelector(`[data-save="${k}"]`);if(el)localStorage.setItem("cw-"+k,el.value)});renderNatalSnapshot();renderPersonalDashboard()}
 function renderNatalSnapshot(){
  let el=document.getElementById("natalSnapshot");if(!el)return;let n=getNatal();
  if(!n){el.innerHTML="<h3>Natal Snapshot</h3><p>Add birth date/time, coordinates and UTC offset above to generate your saved chart snapshot.</p>";return}
