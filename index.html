@@ -54,7 +54,7 @@ body{padding-bottom:calc(78px + var(--safe-bottom))}
 .section-divider .symbol{font-size:3rem;color:#8d5a91}.celestial-rule{text-align:center;color:#b58b43;letter-spacing:.6rem;margin:20px 0}
 .chart-angles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.angle-pill{padding:10px;border:1px solid #d8b56c55;border-radius:12px;background:#fff8}
 @media(max-width:820px){
- header nav{display:none}.mobile-bottom{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:50;bottom:0;left:0;right:0;padding:8px 8px calc(8px + var(--safe-bottom));background:#160f20f2;backdrop-filter:blur(16px);border-top:1px solid #d8b56c55}
+ header nav{display:flex;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}header{align-items:flex-start;flex-direction:column}header nav button{white-space:nowrap;flex:0 0 auto}.mobile-bottom{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:50;bottom:0;left:0;right:0;padding:8px 8px calc(8px + var(--safe-bottom));background:#160f20f2;backdrop-filter:blur(16px);border-top:1px solid #d8b56c55}
  .mobile-bottom button{border:0;background:transparent;padding:6px 2px;font-size:.7rem;border-radius:10px}.mobile-bottom button span{display:block;font-size:1.35rem;margin-bottom:2px}
  main{padding-left:14px;padding-right:14px}.dashboard-grid{grid-template-columns:1fr 1fr}
 }
