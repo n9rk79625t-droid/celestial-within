@@ -211,7 +211,7 @@ function renderArchives(){["moon","wheel","tarot"].forEach(type=>{let el=documen
 function zodiacName(lon){return signs[Math.floor(((lon%360)+360)%360/30)][1]}
 function phaseName(a){let names=["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"];return names[Math.floor(((a+22.5)%360)/45)%8]}
 function fallbackPhase(){let syn=29.53058867, known=Date.UTC(2000,0,6,18,14), days=(Date.now()-known)/86400000, age=((days%syn)+syn)%syn;return age/syn*360}
-function moonData(){let a;try{a=Astronomy.MoonPhase(new Date())}catch(e){a=fallbackPhase()}return {angle:a,name:phaseName(a),illum:(1-Math.cos(a*Math.PI/180))/2}}
+function moonData(){let a;try{a=(typeof Astronomy!=="undefined"&&Astronomy.MoonPhase)?Astronomy.MoonPhase(new Date()):fallbackPhase()}catch(e){a=fallbackPhase()}return {angle:a,name:phaseName(a),illum:(1-Math.cos(a*Math.PI/180))/2}}
 function renderMoon(){let m=moonData();document.getElementById("moonCurrent").innerHTML=`<div class="card"><div class="eyebrow">Current phase</div><h2>${m.name}</h2><p>Approx. ${(m.illum*100).toFixed(0)}% illuminated. Use the phase as a reflective rhythm rather than a prediction.</p></div>`}
 
 function norm360(x){return ((x%360)+360)%360}
@@ -238,7 +238,7 @@ function houseCusps(asc,system){
 function fmtZodiac(lon){let s=signs[Math.floor(norm360(lon)/30)][1],d=norm360(lon)%30;return `${s} ${d.toFixed(1)}°`}
 let deferredInstallPrompt=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;let b=document.getElementById("installBanner");if(b)b.style.display="flex"});
-async function installApp(){if(deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null}else{alert("On iPhone/iPad: open the Share menu in Safari and choose “Add to Home Screen.” On supported Android browsers, use the browser’s Install/Add to Home Screen option.")}}
+async function installApp(){if(deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null}else{alert("On iPhone/iPad: open the Share menu in Safari and choose Add to Home Screen. On supported Android browsers, use the browser Install or Add to Home Screen option.")}}
 if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost"))window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 
 function renderSky(){document.getElementById("todayDate").textContent=new Date().toLocaleString([], {dateStyle:"full",timeStyle:"short"});let m=moonData();document.getElementById("moonName").textContent=m.name;document.getElementById("moonInfo").textContent=`Approximately ${(m.illum*100).toFixed(1)}% illuminated`;let shade=document.getElementById("moonShade");let x=Math.cos(m.angle*Math.PI/180)*75;shade.style.transform=`translateX(${x}px)`;let wheel=document.getElementById("astroWheel");wheel.innerHTML="";
@@ -247,7 +247,7 @@ let cusps=Array.from({length:12},(_,i)=>i*30),angles=null;
 if(isFinite(lat)&&isFinite(lon)){angles=localAngles(new Date(),lat,lon);cusps=houseCusps(angles.asc,system);let ca=document.getElementById("chartAngles");if(ca)ca.innerHTML=`<div class="angle-pill"><b>ASC</b><br>${fmtZodiac(angles.asc)}</div><div class="angle-pill"><b>MC</b><br>${fmtZodiac(angles.mc)}</div><div class="angle-pill"><b>DSC</b><br>${fmtZodiac(angles.desc)}</div><div class="angle-pill"><b>IC</b><br>${fmtZodiac(angles.ic)}</div>`}
 cusps.forEach((c,i)=>{let l=document.createElement("div");l.className="houseLine";l.style.transform=`rotate(${c}deg)`;l.title=`House ${i+1}: ${fmtZodiac(c)}`;wheel.appendChild(l)});
 let bodyMap=[["Sun","☉"],["Moon","☽"],["Mercury","☿"],["Venus","♀"],["Mars","♂"],["Jupiter","♃"],["Saturn","♄"],["Uranus","♅"],["Neptune","♆"],["Pluto","♇"]], rows=[];
-bodyMap.forEach(([name,g],idx)=>{let lon=null;try{lon=name==="Moon"?Astronomy.EclipticLongitude(Astronomy.Body.Moon,new Date()):Astronomy.EclipticLongitude(Astronomy.Body[name],new Date())}catch(e){try{let v=Astronomy.GeoVector(Astronomy.Body[name],new Date(),true);let ec=Astronomy.Ecliptic(v);lon=ec.elon}catch(_){}}
+bodyMap.forEach(([name,g],idx)=>{let lon=null;if(typeof Astronomy!=="undefined"){try{lon=name==="Moon"?Astronomy.EclipticLongitude(Astronomy.Body.Moon,new Date()):Astronomy.EclipticLongitude(Astronomy.Body[name],new Date())}catch(e){try{let v=Astronomy.GeoVector(Astronomy.Body[name],new Date(),true);let ec=Astronomy.Ecliptic(v);lon=ec.elon}catch(_){}}}
 if(lon!=null&&isFinite(lon)){let r=118+(idx%2)*16,ang=(lon-90)*Math.PI/180,x=155+r*Math.cos(ang),y=155+r*Math.sin(ang),d=document.createElement("div");d.className="planetdot";d.style.left=x+"px";d.style.top=y+"px";d.title=name+" "+lon.toFixed(1)+"°";d.textContent=g;wheel.appendChild(d);rows.push(`<p><b>${g} ${name}</b> — ${zodiacName(lon)} ${((((lon%30)+30)%30)).toFixed(1)}°</p>`)}});
 if(!rows.length)rows.push("<p>Live planetary calculations need an internet connection the first time this file loads so its astronomy library can load.</p>");document.getElementById("planetTable").innerHTML=rows.join("")}
 
@@ -258,7 +258,7 @@ function birthDateUTC(){
 }
 function planetLongitudes(date){
  let bodyMap=[["Sun","☉"],["Moon","☽"],["Mercury","☿"],["Venus","♀"],["Mars","♂"],["Jupiter","♃"],["Saturn","♄"],["Uranus","♅"],["Neptune","♆"],["Pluto","♇"]],out=[];
- bodyMap.forEach(([name,g])=>{let lon=null;try{lon=Astronomy.EclipticLongitude(Astronomy.Body[name],date)}catch(e){try{let v=Astronomy.GeoVector(Astronomy.Body[name],date,true);lon=Astronomy.Ecliptic(v).elon}catch(_){}}
+ if(typeof Astronomy==="undefined")return out;bodyMap.forEach(([name,g])=>{let lon=null;try{lon=Astronomy.EclipticLongitude(Astronomy.Body[name],date)}catch(e){try{let v=Astronomy.GeoVector(Astronomy.Body[name],date,true);lon=Astronomy.Ecliptic(v).elon}catch(_){}}
  if(lon!=null&&isFinite(lon))out.push({name,g,lon:norm360(lon)})});return out;
 }
 function houseOfLongitude(lon,cusps){
