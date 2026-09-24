@@ -270,7 +270,7 @@ function getNatal(){
 }
 function saveProfile(){bind();["profile-name","birth-date","birth-time","birth-place","birth-lat","birth-lon","birth-offset","birth-house"].forEach(k=>{let el=document.querySelector(`[data-save="${k}"]`);if(el)localStorage.setItem("cw-"+k,el.value)});renderNatalSnapshot();renderPersonalDashboard()}
 function renderNatalSnapshot(){
- let el=document.getElementById("natalSnapshot");if(!el)return,n=getNatal();
+ let el=document.getElementById("natalSnapshot");if(!el)return;let n=getNatal();
  if(!n){el.innerHTML="<h3>Natal Snapshot</h3><p>Add birth date/time, coordinates and UTC offset above to generate your saved chart snapshot.</p>";return}
  let name=localStorage.getItem("cw-profile-name")||"Your",place=localStorage.getItem("cw-birth-place")||"birthplace";
  el.innerHTML=`<div class="eyebrow">${esc(name)}'s natal chart</div><h2>Natal Snapshot</h2><p>${esc(place)} · ASC ${fmtZodiac(n.ang.asc)} · MC ${fmtZodiac(n.ang.mc)}</p><div class="natal-grid">`+
@@ -281,7 +281,7 @@ function transitPrompt(planet,house){
  return `With ${planet} moving through your ${house}${house===1?"st":house===2?"nd":house===3?"rd":"th"} house, you might reflect on ${themes[house]}. What feels especially alive or noticeable here today?`;
 }
 function renderPersonalDashboard(){
- let el=document.getElementById("personalGreeting");if(!el)return,n=getNatal(),name=localStorage.getItem("cw-profile-name")||"";
+ let el=document.getElementById("personalGreeting");if(!el)return;let n=getNatal(),name=localStorage.getItem("cw-profile-name")||"";
  if(!n){el.innerHTML=`<div class="eyebrow">Personal sky note</div><h3>Complete your Birth Profile</h3><p>Save your birth information to connect current transits with your natal houses.</p><button onclick="show('profile')">Create profile</button>`;return}
  let cur=planetLongitudes(new Date()),moon=cur.find(x=>x.name==="Moon"),sun=cur.find(x=>x.name==="Sun"),mh=moon?houseOfLongitude(moon.lon,n.cusps):null,sh=sun?houseOfLongitude(sun.lon,n.cusps):null;
  el.className="card transit-card";el.innerHTML=`<div class="eyebrow">${name?esc(name)+" · ":""}Today’s personalized sky</div><h3>${moon?`☾ Moon transiting your ${mh}${mh===1?"st":mh===2?"nd":mh===3?"rd":"th"} house`:"Current transits"}</h3><p>${moon?transitPrompt("the Moon",mh):""}</p>${sun?`<p class="mini">☉ Sun: ${fmtZodiac(sun.lon)} · natal house ${sh}</p>`:""}<button onclick="show('today')">View today’s sky</button>`;
@@ -291,7 +291,7 @@ function saveCalendarEntry(){
  if(!text.trim())return;let a=JSON.parse(localStorage.getItem("cw-calendar")||"[]");a.unshift({d,type,title,text});localStorage.setItem("cw-calendar",JSON.stringify(a));document.getElementById("calendarTitle").value="";document.getElementById("calendarText").value="";renderCalendar();
 }
 function renderCalendar(){
- let el=document.getElementById("calendarEntries");if(!el)return,a=JSON.parse(localStorage.getItem("cw-calendar")||"[]"),m=(document.getElementById("calendarMonth")||{}).value;
+ let el=document.getElementById("calendarEntries");if(!el)return;let a=JSON.parse(localStorage.getItem("cw-calendar")||"[]"),m=(document.getElementById("calendarMonth")||{}).value;
  if(m)a=a.filter(x=>x.d.startsWith(m));el.innerHTML=a.length?a.map(x=>`<article class="cal-entry"><span class="datebadge">${esc(x.d)} · ${esc(x.type)}</span><h3>${esc(x.title||"Journal Entry")}</h3><p>${esc(x.text).replace(/\n/g,"<br>")}</p></article>`).join(""):`<p class="mini">No dated entries in this view yet.</p>`;
 }
 
