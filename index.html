@@ -75,6 +75,7 @@ body{padding-bottom:calc(78px + var(--safe-bottom))}
 .transit-card{background:linear-gradient(135deg,#f8ecf6,#fff9ef);border-left:4px solid #d8b56c}
 .recipe-modal{display:none;position:fixed;z-index:100;inset:0;background:#100918cc;padding:calc(25px + env(safe-area-inset-top,0px)) 14px 30px;overflow:auto}.recipe-modal.open{display:block}.recipe-card{max-width:720px;margin:auto;background:#fffaf7;color:var(--ink);border:2px solid var(--gold);border-radius:22px;padding:24px;position:relative;box-shadow:0 25px 80px #0008}.recipe-close{position:absolute;right:12px;top:12px;font-size:1.25rem}.archive-section{margin:18px 0}.archive-card{border:1px solid #d8b56c55;border-radius:15px;padding:14px;margin:10px 0;background:#fffaf8}.archive-card h3{margin:.2em 0}.entry-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.step-row{display:grid;grid-template-columns:38px 1fr auto;gap:8px;align-items:start;margin:8px 0}.step-num{padding-top:10px;font-weight:700;text-align:center;color:#8c6740}.wheel-link{cursor:pointer}.wheel-link:hover{box-shadow:0 0 0 2px #d8b56c55}
 @media(max-width:520px){.natal-grid{grid-template-columns:1fr}}
+.daily-chart-hero{background:radial-gradient(circle at 50% 45%,#4a255b 0,#281539 45%,#160d22 100%);border:1px solid #d8b56c66;border-radius:28px;padding:18px;box-shadow:0 18px 55px #0006;margin-bottom:22px}.daily-chart-hero .wheel{margin:10px auto;width:min(82vw,560px);height:min(82vw,560px);max-width:560px;max-height:560px}.daily-chart-title{text-align:center}.daily-data{margin-top:20px}.daily-chart-hero .chart-angles{justify-content:center}.daily-chart-hero .planetdot{box-shadow:0 0 10px #d98ab377}
 </style>
 </head>
 <body>
@@ -118,19 +119,10 @@ body{padding-bottom:calc(78px + var(--safe-bottom))}
 </div>
 
 <div id="today" class="panel"><div class="eyebrow">Daily information</div><h1>Today’s Sky</h1>
- <div class="card" style="margin-bottom:18px">
-  <h3>Personalize the chart with your location</h3>
-  <p>For accurate local chart angles and houses, allow your device to share its current location. Your coordinates stay in this browser storage in this prototype and are used for chart calculations.</p>
-  <button class="btn gold" onclick="requestLocation()">Use My Current Location</button>
-  <span id="locationStatus" class="mini"></span>
-  <div class="two"><div><label>Latitude</label><input id="latitude" data-save="latitude" placeholder="e.g. 42.68"></div><div><label>Longitude</label><input id="longitude" data-save="longitude" placeholder="e.g. -89.02"></div></div>
-  <div class="house-selector"><label style="margin:0">House system</label>
-<select id="houseSystem" style="max-width:220px" onchange="renderSky()"><option value="whole">Whole Sign</option><option value="equal">Equal House</option></select></div>
-<p class="mini">With location permission, this version calculates the local Ascendant and Midheaven and draws location-based Whole Sign or Equal houses. Planetary positions come from Astronomy Engine.</p>
-<div id="chartAngles" class="chart-angles"></div>
- </div>
- <div class="chartwrap"><div class="card"><div id="astroWheel" class="wheel"></div><p class="mini">The wheel shows current geocentric planetary zodiac longitudes. After you share a location, the house sectors are calculated from the local Ascendant using your selected Whole Sign or Equal House system.</p></div>
- <div><div class="card"><h3 id="todayDate"></h3><div id="planetTable"></div></div><div class="card" style="margin-top:16px"><h3>Live Moon</h3><div class="moonviz"><div id="moonShade" class="moonshade"></div></div><h2 id="moonName" style="text-align:center"></h2><p id="moonInfo" style="text-align:center"></p></div></div></div>
+ <div class="daily-chart-hero"><div class="daily-chart-title"><div class="eyebrow">Your daily celestial chart</div><h2 id="todayDate"></h2></div><div id="astroWheel" class="wheel"></div><div id="chartAngles" class="chart-angles"></div><p class="mini" style="text-align:center;color:#ddcfe4">The wheel places the current planets around the zodiac and, when location is available, shows your local angles and houses.</p></div>
+ <div class="daily-data">
+ <div class="card" style="margin-bottom:18px"><h3>Chart Settings</h3><p>Your chart is the focus above; location and calculation controls live here below it.</p><button class="btn gold" onclick="requestLocation()">Use My Current Location</button><span id="locationStatus" class="mini"></span><div class="two"><div><label>Latitude</label><input id="latitude" data-save="latitude" placeholder="e.g. 42.68"></div><div><label>Longitude</label><input id="longitude" data-save="longitude" placeholder="e.g. -89.02"></div></div><div class="house-selector"><label style="margin:0">House system</label><select id="houseSystem" style="max-width:220px" onchange="renderSky()"><option value="whole">Whole Sign</option><option value="equal">Equal House</option></select></div><p class="mini">Coordinates stay in browser storage in this prototype and are used for local chart calculations.</p></div>
+ <div class="grid"><div class="card"><h3>Planetary Positions</h3><div id="planetTable"></div></div><div class="card"><h3>Live Moon</h3><div class="moonviz"><div id="moonShade" class="moonshade"></div></div><h2 id="moonName" style="text-align:center"></h2><p id="moonInfo" style="text-align:center"></p></div><div class="card"><h3>Daily Reflection</h3><p>Use today’s sky as a symbolic prompt rather than a prediction.</p><button onclick="sendTodayToJournal()">Reflect in Daily Journal</button></div></div></div>
 </div>
 
 <div id="signs" class="panel"><div class="eyebrow">Journey I</div><h1>Through the Signs</h1><div id="signGrid" class="grid4"></div></div>
@@ -259,10 +251,11 @@ if(isFinite(lat)&&isFinite(lon)){angles=localAngles(new Date(),lat,lon);cusps=ho
 cusps.forEach((c,i)=>{let l=document.createElement("div");l.className="houseLine";l.style.transform=`rotate(${c}deg)`;l.title=`House ${i+1}: ${fmtZodiac(c)}`;wheel.appendChild(l)});
 let bodyMap=[["Sun","☉"],["Moon","☽"],["Mercury","☿"],["Venus","♀"],["Mars","♂"],["Jupiter","♃"],["Saturn","♄"],["Uranus","♅"],["Neptune","♆"],["Pluto","♇"]], rows=[];
 bodyMap.forEach(([name,g],idx)=>{let lon=null;if(typeof Astronomy!=="undefined"){try{lon=name==="Moon"?Astronomy.EclipticLongitude(Astronomy.Body.Moon,new Date()):Astronomy.EclipticLongitude(Astronomy.Body[name],new Date())}catch(e){try{let v=Astronomy.GeoVector(Astronomy.Body[name],new Date(),true);let ec=Astronomy.Ecliptic(v);lon=ec.elon}catch(_){}}}
-if(lon!=null&&isFinite(lon)){let r=118+(idx%2)*16,ang=(lon-90)*Math.PI/180,x=155+r*Math.cos(ang),y=155+r*Math.sin(ang),d=document.createElement("div");d.className="planetdot";d.style.left=x+"px";d.style.top=y+"px";d.title=name+" "+lon.toFixed(1)+"°";d.textContent=g;wheel.appendChild(d);rows.push(`<p><b>${g} ${name}</b> — ${zodiacName(lon)} ${((((lon%30)+30)%30)).toFixed(1)}°</p>`)}});
+if(lon!=null&&isFinite(lon)){let size=wheel.clientWidth||310,center=size/2,r=size*.38+(idx%2)*size*.04,ang=(lon-90)*Math.PI/180,x=center+r*Math.cos(ang),y=center+r*Math.sin(ang),d=document.createElement("div");d.className="planetdot";d.style.left=x+"px";d.style.top=y+"px";d.title=name+" "+lon.toFixed(1)+"°";d.textContent=g;wheel.appendChild(d);rows.push(`<p><b>${g} ${name}</b> — ${zodiacName(lon)} ${((((lon%30)+30)%30)).toFixed(1)}°</p>`)}});
 if(!rows.length)rows.push("<p>Live planetary calculations need an internet connection the first time this file loads so its astronomy library can load.</p>");document.getElementById("planetTable").innerHTML=rows.join("")}
 
 
+function sendTodayToJournal(){let rows=document.getElementById("planetTable"),summary=rows?rows.innerText:"";show("calendar");document.getElementById("calendarTitle").value="Today’s Sky Reflection";document.getElementById("calendarText").value="What am I noticing today as I reflect on the current sky?\n\n"+summary+"\n\nMy reflection: "}
 function detectBirthTimezone(){let z=Intl.DateTimeFormat().resolvedOptions().timeZone||"";let el=document.getElementById("birthTimezone");if(el){el.value=z;localStorage.setItem("cw-birth-timezone",z)}}
 function birthDateUTC(){
  let d=(document.getElementById("birthDate")||{}).value||localStorage.getItem("cw-birth-date"),t=(document.getElementById("birthTime")||{}).value||localStorage.getItem("cw-birth-time")||"12:00",off=parseFloat((document.getElementById("birthOffset")||{}).value||localStorage.getItem("cw-birth-offset")||"0");
