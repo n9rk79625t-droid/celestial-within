@@ -103,6 +103,21 @@ button,.btn{background:#fff9fb;color:#642c50;border-color:#c99a465c;box-shadow:0
 .printbook{background:#fffdfb}
 footer{color:#876b80}
 @media print{body{background:white!important}.book-cover,.section-divider{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+/* Celestial Crystal decorative layer: lightweight inline crystal + lavender illustrations */
+.crystal-corner{position:absolute;pointer-events:none;z-index:0;opacity:.9}.crystal-corner>*{pointer-events:none}
+.panel{position:relative}.panel>*,.hero>*{position:relative;z-index:1}
+.panel:before,.panel:after{content:"";position:absolute;pointer-events:none;z-index:0;width:125px;height:150px;opacity:.34;background-repeat:no-repeat;background-size:contain}
+.panel:before{left:-8px;top:14px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 160'%3E%3Cg fill='none' stroke='%23c99a46' stroke-width='1'%3E%3Cpath d='M19 145L40 77l18 68M40 77l13-29 14 31 13 66M53 48l9-22 12 25 20 94'/%3E%3C/g%3E%3Cg opacity='.9'%3E%3Cpath fill='%23eeb8cb' d='M19 145L40 77l18 68z'/%3E%3Cpath fill='%23b68ac8' d='M40 77l13-29 14 31-9 66z'/%3E%3Cpath fill='%238a5ba6' d='M62 145l12-94 20 94z'/%3E%3C/g%3E%3C/svg%3E")}
+.panel:after{right:-5px;top:70px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 160'%3E%3Cg fill='none' stroke='%238b5aa8' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M83 151c-4-38-6-75-3-125M79 55L60 35M80 72l24-22M79 91L53 70M80 108l26-18M78 126l-24-17'/%3E%3C/g%3E%3Cg fill='%23a675b8' opacity='.75'%3E%3Cellipse cx='58' cy='33' rx='8' ry='16' transform='rotate(-48 58 33)'/%3E%3Cellipse cx='106' cy='48' rx='8' ry='17' transform='rotate(48 106 48)'/%3E%3Cellipse cx='50' cy='67' rx='8' ry='17' transform='rotate(-52 50 67)'/%3E%3Cellipse cx='108' cy='87' rx='8' ry='17' transform='rotate(55 108 87)'/%3E%3Cellipse cx='51' cy='106' rx='8' ry='17' transform='rotate(-58 51 106)'/%3E%3C/g%3E%3C/svg%3E")}
+.card,.dash-card,.tile,.recipe-card{position:relative;overflow:hidden}
+.card:after,.dash-card:after{content:"✦";position:absolute;right:13px;bottom:9px;color:#c99a4638;font-size:1.15rem}
+.hero:after{content:"";position:absolute;right:1%;bottom:2%;width:230px;height:170px;opacity:.72;pointer-events:none;background:center/contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 180'%3E%3Cg fill='none' stroke='%23c99a46' stroke-width='1.2'%3E%3Cpath d='M25 163L65 72l33 91M65 72l18-45 32 47 26 89M114 163l27-89 34 89M158 163l20-65 32 65'/%3E%3C/g%3E%3Cpath fill='%23efb8cb' fill-opacity='.72' d='M25 163L65 72l33 91z'/%3E%3Cpath fill='%23ad7ac1' fill-opacity='.72' d='M65 72l18-45 32 47-17 89z'/%3E%3Cpath fill='%238a5aa5' fill-opacity='.76' d='M114 163l27-89 34 89z'/%3E%3Cpath fill='%23f3cad5' fill-opacity='.8' d='M158 163l20-65 32 65z'/%3E%3C/svg%3E")}
+.book-cover .cover-inner:before,.section-divider>div:before{content:"◇  ✦  ◇";display:block;color:#a36eb1;letter-spacing:.45rem;margin-bottom:12px}
+.book-cover{background-image:radial-gradient(circle at 50% 42%,#fffdfb 0,#f8dfe8 45%,#eadbf3 100%),linear-gradient(45deg,transparent 48%,#c99a4618 49% 51%,transparent 52%)}
+.section-divider:before,.section-divider:after{content:"❧";position:absolute;color:#9b6caf66;font-size:4rem;top:8%;left:7%;transform:rotate(-20deg)}.section-divider:after{left:auto;right:7%;transform:rotate(20deg)}
+@media(max-width:520px){.panel:before,.panel:after{width:82px;height:105px;opacity:.25}.hero:after{width:145px;height:105px;opacity:.5}}
+@media print{.panel:before,.panel:after,.hero:after{display:none!important}.section-divider:before,.section-divider:after{visibility:visible!important}}
 </style>
 </head>
 <body>
