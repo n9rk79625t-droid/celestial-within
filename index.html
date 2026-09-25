@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.svg">
 <title>Celestial Within — Esoteric Zodiac Journal</title>
-<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>\n<script src="astrology-engine.js"></script>
 <style>
 :root{--night:#130d20;--plum:#281539;--violet:#6f4a91;--pink:#d98ab3;--rose:#f0bfd5;--gold:#d8b56c;--gold2:#f1d99b;--cream:#fff9f0;--ink:#2b2030;--muted:#7d6c82;--card:rgba(255,250,247,.95);--line:rgba(216,181,108,.35)}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#3b2050 0,transparent 30%),radial-gradient(circle at 90% 20%,#4b2446 0,transparent 28%),var(--night);color:var(--cream);font-family:Inter,system-ui,sans-serif}
@@ -111,11 +111,11 @@ body{padding-bottom:calc(78px + var(--safe-bottom))}
   <div class="two"><div><label>Name for journal cover</label><input id="profileName" data-save="profile-name" placeholder="Your name"></div><div><label>Birth date</label><input id="birthDate" type="date" data-save="birth-date"></div></div>
   <div class="two"><div><label>Birth time</label><input id="birthTime" type="time" data-save="birth-time"></div><div><label>Birth place</label><input id="birthPlace" data-save="birth-place" placeholder="City, state/country"><button type="button" style="margin-top:8px" onclick="lookupBirthplace()">Find birthplace details</button><div id="birthPlaceStatus" class="mini"></div></div></div>
   <div class="two"><div><label>Birth latitude</label><input id="birthLat" data-save="birth-lat" placeholder="Latitude"></div><div><label>Birth longitude</label><input id="birthLon" data-save="birth-lon" placeholder="Longitude"></div></div>
-  <div class="two"><div><label>Birth timezone</label><input id="birthTimezone" data-save="birth-timezone" placeholder="Filled automatically from birthplace"><button type="button" style="margin-top:8px" onclick="detectBirthTimezone()">Use this device timezone</button><input id="birthOffset" type="hidden" data-save="birth-offset"></div><div><label>House system</label><select id="birthHouseSystem" data-save="birth-house"><option value="whole">Whole Sign</option><option value="equal">Equal House</option></select></div></div>
+  <div class="two"><div><label>Birth timezone</label><input id="birthTimezone" data-save="birth-timezone" placeholder="Filled automatically from birthplace"><button type="button" style="margin-top:8px" onclick="detectBirthTimezone()">Use this device timezone</button><input id="birthOffset" type="hidden" data-save="birth-offset"></div><div><label>House system</label><select id="birthHouseSystem" data-save="birth-house"><option value="whole">Whole Sign</option><option value="equal">Equal House</option><option value="porphyry">Porphyry</option></select></div></div>
   <button class="btn gold" onclick="saveProfile()">Save & Generate Natal Snapshot</button>
   <p class="mini">Enter the birth city and choose “Find birthplace details.” The app fills the coordinates and IANA timezone automatically, then uses the browser timezone database to account for historical UTC offsets and daylight-saving rules.</p>
  </div>
- <section><div id="natalSnapshot" class="card"></div></section>
+ <section><div id="natalSnapshot" class="card"></div></section><section><div id="natalDiagnostics" class="card"><p>Save your profile to inspect the calculation engine.</p></div></section>
 </div>
 
 <div id="today" class="panel"><div class="eyebrow">Daily information</div><h1>Today’s Sky</h1>
@@ -271,9 +271,15 @@ function houseOfLongitude(lon,cusps){
 }
 function getNatal(){
  let date=birthDateUTC(),lat=parseFloat(localStorage.getItem("cw-birth-lat")),lon=parseFloat(localStorage.getItem("cw-birth-lon")),system=localStorage.getItem("cw-birth-house")||"whole";
- if(!date||!isFinite(lat)||!isFinite(lon))return null;let ang=localAngles(date,lat,lon),cusps=houseCusps(ang.asc,system),pls=planetLongitudes(date);return {date,lat,lon,system,ang,cusps,pls};
+ if(!date||!isFinite(lat)||!isFinite(lon))return null;
+ if(window.CelestialNatalEngine){let chart=CelestialNatalEngine.calculate({date,lat,lon,houseSystem:system});if(chart)return {date,lat,lon,system,ang:chart.angles,cusps:chart.cusps,pls:chart.planets.map(p=>({name:p.name,g:p.glyph,lon:p.longitude,retro:p.retrograde,house:p.house})),aspects:chart.aspects,engine:chart}}
+ let ang=localAngles(date,lat,lon),cusps=houseCusps(ang.asc,system),pls=planetLongitudes(date);return {date,lat,lon,system,ang,cusps,pls,aspects:[]};
 }
-function saveProfile(){bind();["profile-name","birth-date","birth-time","birth-place","birth-lat","birth-lon","birth-timezone","birth-offset","birth-house"].forEach(k=>{let el=document.querySelector(`[data-save="${k}"]`);if(el)localStorage.setItem("cw-"+k,el.value)});renderNatalSnapshot();renderPersonalDashboard()}
+function renderNatalDiagnostics(){
+ let el=document.getElementById("natalDiagnostics"),n=getNatal();if(!el)return;if(!n){el.innerHTML="<p>Save complete birth data to inspect calculations.</p>";return}
+ let asp=n.aspects||[];el.innerHTML='<div class="eyebrow">Engine diagnostic · '+esc(n.engine?n.engine.version:"fallback")+'</div><h3>Calculated Chart Data</h3><p><b>ASC</b> '+fmtZodiac(n.ang.asc)+' · <b>MC</b> '+fmtZodiac(n.ang.mc)+' · <b>House system</b> '+esc(n.system)+'</p><details><summary>House cusps</summary>'+n.cusps.map((x,i)=>'<p>House '+(i+1)+': '+fmtZodiac(x)+'</p>').join("")+'</details><details><summary>Planet positions & retrogrades</summary>'+n.pls.map(p=>'<p>'+p.g+' '+p.name+': '+fmtZodiac(p.lon)+' · House '+houseOfLongitude(p.lon,n.cusps)+(p.retro?" · ℞ retrograde":"")+'</p>').join("")+'</details><details><summary>Major aspects ('+asp.length+')</summary>'+(asp.length?asp.map(a=>'<p>'+a.glyph1+' '+a.planet1+' '+a.name+' '+a.glyph2+' '+a.planet2+' · orb '+a.orb.toFixed(2)+'°</p>').join(""):'<p>No major aspects within default orbs.</p>')+'</details>';
+}
+function saveProfile(){bind();["profile-name","birth-date","birth-time","birth-place","birth-lat","birth-lon","birth-timezone","birth-offset","birth-house"].forEach(k=>{let el=document.querySelector(`[data-save="${k}"]`);if(el)localStorage.setItem("cw-"+k,el.value)});renderNatalSnapshot();renderNatalDiagnostics();renderPersonalDashboard()}
 function renderNatalSnapshot(){
  let el=document.getElementById("natalSnapshot");if(!el)return;let n=getNatal();
  if(!n){el.innerHTML="<h3>Natal Snapshot</h3><p>Add birth date/time, coordinates and UTC offset above to generate your saved chart snapshot.</p>";return}
