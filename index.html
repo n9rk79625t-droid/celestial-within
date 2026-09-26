@@ -180,6 +180,42 @@ footer{color:#876b80}
  #home .hero{padding:34px 18px 172px!important}
  #home .hero:after{left:4px!important;right:4px!important;height:158px!important}
 }
+
+/* Home layout redesign — artwork slots intentionally separated from UI */
+#home{padding-bottom:86px}
+#home .home-redesign{position:relative;max-width:760px;margin:0 auto;padding:0 16px 28px;overflow:hidden;background:linear-gradient(180deg,#fff9f8 0%,#fff7f8 54%,#fbeef4 100%)}
+#home .home-title{text-align:center;position:relative;z-index:2;padding:116px 18px 22px}
+#home .home-title h1{font-size:clamp(2.5rem,9vw,4.2rem);line-height:1;margin:0 0 12px;color:#67284f;font-style:italic}
+#home .home-title .eyebrow{font-size:.72rem;letter-spacing:.18em;color:#b68755}
+#home .home-art{position:absolute;z-index:1;pointer-events:none}
+#home .home-art-top{inset:0 0 auto;height:185px;background:radial-gradient(circle at 50% 18%,#f8d8d1 0 2%,transparent 3%),linear-gradient(135deg,transparent 0 70%,#f1d6e3 70% 72%,transparent 72%)}
+#home .home-profile-note{position:relative;z-index:2;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;margin:4px 2px 14px;padding:10px 12px;border:1px solid #e9d7cf;border-radius:16px;background:#fffaf8cc;box-shadow:0 4px 14px #8b4a6a12}
+#home .home-profile-note p{margin:2px 0;font-size:.75rem;line-height:1.3}
+#home .home-profile-note button{padding:7px 10px;font-size:.72rem}
+#home .home-feature-grid{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#home .home-feature{appearance:none;width:100%;min-height:92px;display:grid;grid-template-columns:58px 1fr;align-items:center;gap:9px;text-align:left;padding:10px;border:1px solid #eadbd4;border-radius:15px;background:#fffaf8e8;color:#5d294a;box-shadow:0 4px 12px #71334f10}
+#home .home-feature:hover,#home .home-feature:focus{transform:translateY(-1px);border-color:#d7b5c7}
+#home .home-feature b{display:block;font-family:Georgia,serif;font-size:1rem;font-weight:500;margin-bottom:3px}
+#home .home-feature small{display:block;font-size:.7rem;line-height:1.25;color:#846775}
+#home .home-icon{width:52px;height:58px;display:grid;place-items:center;font-family:Georgia,serif;font-size:2rem;color:#a96d87;border-radius:45% 55% 48% 52%;background:radial-gradient(circle,#fff 20%,#f8e4e8 68%,transparent 70%)}
+#home .icon-sky,#home .icon-celebrations{color:#c4914d}.home-icon.icon-natal{color:#b68a57}.home-icon.icon-rituals{color:#7d4b93}
+#home .home-motto{position:relative;z-index:2;text-align:center;margin:18px 2px 0;padding:19px 14px 112px;border-top:1px solid #ead4c6;color:#773455}
+#home .home-motto p{font-family:Georgia,serif;font-size:1.25rem;font-style:italic;margin:3px 0}
+#home .home-motto small{display:block;font-size:.72rem;line-height:1.35;color:#966f7f}
+#home .home-motto>span{color:#c79b55}
+#home .home-art-bottom{left:0;right:0;bottom:0;height:120px;background:radial-gradient(ellipse at 8% 100%,#d7b4d8 0 12%,transparent 13%),radial-gradient(ellipse at 92% 100%,#eabec9 0 12%,transparent 13%)}
+@media(max-width:520px){
+ #home .home-redesign{padding-left:12px;padding-right:12px}
+ #home .home-title{padding-top:98px}
+ #home .home-title h1{font-size:2.75rem}
+ #home .home-feature-grid{gap:8px}
+ #home .home-feature{grid-template-columns:48px 1fr;min-height:86px;padding:8px}
+ #home .home-icon{width:45px;height:52px;font-size:1.7rem}
+ #home .home-feature b{font-size:.9rem}
+ #home .home-feature small{font-size:.64rem}
+ #home .home-profile-note{grid-template-columns:auto 1fr}
+ #home .home-profile-note button{grid-column:2}
+}
 </style>
 </head>
 <body>
@@ -187,24 +223,21 @@ footer{color:#876b80}
 <main>
 <div id="home" class="panel active">
  <div id="installBanner" class="install-banner"><div><b>Install Celestial Within</b><div class="mini" style="color:#ead9ec">Add this journal to your phone for an app-like, offline-ready experience.</div></div><button id="installBtn" class="btn gold" onclick="installApp()">Install</button></div>
- <div class="hero"><div><div class="eyebrow">An esoteric reflection sanctuary</div><h1>As above,<br>so within.</h1><p class="lead">Explore your natal chart, the houses, planets, lunar rhythms, tarot practice, seasonal celebrations, and the traditions you create along the way.</p><button class="btn gold" onclick="show('today')">Open Today’s Temple ✦</button><p class="crystals">◇ ✧ ◈ ✦ ◇</p></div><div class="sigil"><span>☿</span></div></div>
- <section><div class="eyebrow">Your sanctuary</div><h2>Home Dashboard</h2><div id="personalGreeting" class="card" style="margin-bottom:14px"><div class="eyebrow">Personal sky note</div><h3>Complete your Birth Profile</h3><p>Save your birth information to connect current transits with your natal houses.</p><button onclick="show('profile')">Create profile</button></div>
-<div class="dashboard-grid">
- <div class="dash-card" onclick="show('today')"><div class="glyph">☉</div><h3>Today’s Sky</h3><p>Live planets, Moon phase, Ascendant and house wheel.</p></div>
- <div class="dash-card" onclick="show('moon')"><div class="glyph">☾</div><h3>Moon Temple</h3><p>Current phase, lunar journal and traditions.</p></div>
- <div class="dash-card" onclick="show('tarot')"><div class="glyph">✦</div><h3>Daily Tarot</h3><p>Card, meditation and reflection practice.</p></div>
- <div class="dash-card" onclick="show('journalbook')"><div class="glyph">◇</div><h3>My Journal Book</h3><p>Turn your saved writing into a beautiful printable book.</p></div>
- </div></section>
- <section><div class="eyebrow">Paths of study</div><h2>Your journeys</h2><div class="grid">
-  <div class="card"><h3>Journey Through the Signs</h3><p>Twelve archetypes for self-reflection, including affirmations, ritual and prompts.</p><button onclick="show('signs')">Enter</button></div>
-  <div class="card"><h3>Journey Through the Houses</h3><p>Explore the twelve areas of lived experience and how your natal placements express through them.</p><button onclick="show('houses')">Enter</button></div>
-  <div class="card"><h3>Journey Through the Planets</h3><p>Meet the planetary archetypes as symbolic functions: identity, feeling, communication, desire, growth and more.</p><button onclick="show('planets')">Enter</button></div>
- </div></section>
- <section><div class="eyebrow">Practice & remembrance</div><h2>Living journal</h2><div class="grid">
-  <div class="card"><h3>Moon Temple</h3><p>Live phase, phase tracker, reflective spell-inspired practices, meditations, journal and traditions.</p><button onclick="show('moon')">Open</button></div>
-  <div class="card"><h3>Wheel of the Year</h3><p>Track sabbats and esbats, plan celebrations, journal your experiences and preserve family or personal traditions.</p><button onclick="show('wheel')">Open</button></div>
-  <div class="card"><h3>Tarot Temple</h3><p>Record a daily card, reflect on its symbolism, meditate with it, and archive meaningful practices.</p><button onclick="show('tarot')">Open</button></div>
- </div></section>
+ <div class="home-redesign">
+  <div class="home-art home-art-top" aria-hidden="true"></div>
+  <div class="home-title"><h1>Celestial Within</h1><div class="eyebrow">A sacred space for alignment, reflection &amp; intention</div></div>
+  <div id="personalGreeting" class="home-profile-note"><span>✦</span><div><b>Your celestial profile</b><p>Complete your Birth Profile to connect current transits with your natal houses.</p></div><button onclick="show('profile')">Create profile</button></div>
+  <div class="home-feature-grid">
+   <button class="home-feature" onclick="show('today')"><span class="home-icon icon-sky">☉</span><span><b>Today’s Sky</b><small>Moon phase, transits &amp; more</small></span></button>
+   <button class="home-feature" onclick="show('journal')"><span class="home-icon icon-journal">▤</span><span><b>My Journal</b><small>Daily reflections</small></span></button>
+   <button class="home-feature" onclick="show('natal')"><span class="home-icon icon-natal">✧</span><span><b>Natal Chart</b><small>Your cosmic blueprint</small></span></button>
+   <button class="home-feature" onclick="show('tarot')"><span class="home-icon icon-tarot">◇</span><span><b>Tarot</b><small>Insights &amp; guidance</small></span></button>
+   <button class="home-feature" onclick="show('wheel')"><span class="home-icon icon-celebrations">☾</span><span><b>Celebrations</b><small>Seasonal &amp; personal</small></span></button>
+   <button class="home-feature" onclick="show('recipes')"><span class="home-icon icon-rituals">◈</span><span><b>Spells &amp; Rituals</b><small>Intentions in action</small></span></button>
+  </div>
+  <div class="home-motto"><span>✦</span><p>As above, so within.</p><small>The stars don’t define me — they remind me who I already am.</small><span>✦</span></div>
+  <div class="home-art home-art-bottom" aria-hidden="true"></div>
+ </div>
 </div>
 
 
