@@ -257,17 +257,26 @@ body:has(#home.active) header nav{pointer-events:auto;background:#fffaf8f5;borde
  #home .home-profile-note{display:flex!important;padding:13px 12px!important}
  #home .home-profile-note button{grid-column:auto!important}
 }
+
+/* Home profile stack + install moved to menu */
+#home>.install-banner{display:none!important}
+#home .home-profile-note{display:block!important;text-align:center!important;padding:18px 20px!important}
+#home .profile-note-copy{display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important}
+#home .profile-note-copy b{order:1;font-size:1.3rem!important;margin:0 0 7px!important}
+#home .profile-note-kicker{order:2;margin:0 0 9px!important}
+#home .profile-note-personal{order:3;margin:0 auto 11px!important;max-width:420px;font-size:.75rem!important;line-height:1.4!important;color:#76586a}
+#home .home-profile-note button{order:4;margin:0 auto 10px!important;padding:8px 15px!important}
+#home .profile-note-help{order:5;margin:0 auto!important;max-width:440px;font-size:.7rem!important;line-height:1.4!important;color:#927482}
 </style>
 </head>
 <body>
 <header><div class="brand">✧ Celestial Within</div><button id="menuToggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav" onclick="toggleMenu()">☰ Menu</button><nav id="nav"></nav></header>
 <main>
 <div id="home" class="panel active">
- <div id="installBanner" class="install-banner"><div><b>Install Celestial Within</b><div class="mini" style="color:#ead9ec">Add this journal to your phone for an app-like, offline-ready experience.</div></div><button id="installBtn" class="btn gold" onclick="installApp()">Install</button></div>
  <div class="home-redesign">
   <div class="home-art home-art-top" aria-hidden="true"></div>
   <div class="home-title"><h1>Celestial Within</h1><div class="eyebrow">A sacred space for alignment, reflection &amp; intention</div></div>
-  <div id="personalGreeting" class="home-profile-note"><div class="profile-note-copy"><span class="profile-note-kicker">Personal sky note</span><b>Complete your Birth Profile</b><p>Save your birth information to connect current transits with your natal houses.</p></div><button onclick="show('profile')">Create profile</button></div>
+  <div id="personalGreeting" class="home-profile-note"><div class="profile-note-copy"><b>Complete your Birth Profile</b><span class="profile-note-kicker">Personal sky note</span><p class="profile-note-personal">Once your profile is complete, your personal sky note will appear here.</p><button onclick="show('profile')">Create profile</button><p class="profile-note-help">Save your birth information to connect current transits with your natal houses.</p></div></div>
   <div class="home-feature-grid">
    <button class="home-feature" onclick="show('today')"><span class="home-icon icon-sky">☉</span><span><b>Today’s Sky</b><small>Moon phase, transits &amp; more</small></span></button>
    <button class="home-feature" onclick="show('journal')"><span class="home-icon icon-journal">▤</span><span><b>My Journal</b><small>Daily reflections</small></span></button>
@@ -359,7 +368,7 @@ const planets=[["☉","Sun","Identity & vitality"],["☽","Moon","Feeling & inst
 const sabbats=[["Samhain","Oct 31","Ancestors, endings, remembrance"],["Yule","Winter Solstice","Stillness, returning light, renewal"],["Imbolc","Feb 1–2","Cleansing, inspiration, first stirrings"],["Ostara","Spring Equinox","Balance, growth, beginnings"],["Beltane","May 1","Vitality, creativity, flourishing"],["Litha","Summer Solstice","Radiance, abundance, fullness"],["Lughnasadh","Aug 1","First harvest, skill, gratitude"],["Mabon","Autumn Equinox","Balance, harvest, preparation"]];
 let lastPanel="home";
 const pages=[["Home","home"],["Profile","profile"],["Natal Chart","natal"],["Today","today"],["Signs","signs"],["Houses","houses"],["Planets","planets"],["Moon","moon"],["Celebrations","wheel"],["Tarot","tarot"],["Daily Journal","calendar"],["Daily Journal Book","journalbook"],["Celebrations Archive","traditionsbook"]];
-document.getElementById("nav").innerHTML=pages.map(x=>`<button onclick="show('${x[1]}')">${x[0]}</button>`).join("");
+document.getElementById("nav").innerHTML=pages.map(x=>`<button onclick="show('${x[1]}')">${x[0]}</button>`).join("")+`<button id="menuInstallBtn" onclick="installApp();closeMenu()">Install App</button>`;
 function toggleMenu(){let n=document.getElementById("nav"),b=document.getElementById("menuToggle");if(!n)return;n.classList.toggle("open");if(b)b.setAttribute("aria-expanded",n.classList.contains("open")?"true":"false")}
 function closeMenu(){let n=document.getElementById("nav"),b=document.getElementById("menuToggle");if(n)n.classList.remove("open");if(b)b.setAttribute("aria-expanded","false")}
 function show(id){closeMenu();document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));let el=document.getElementById(id);if(el){el.classList.add("active");lastPanel=id;window.scrollTo(0,0)} if(id==="today")renderSky();if(id==="profile")renderNatalSnapshot();if(id==="natal")renderNatalPage();if(id==="calendar")renderCalendar();if(id==="home")renderPersonalDashboard();if(id==="moon")renderMoon();if(id==="journalbook")buildJournalBook();if(id==="traditionsbook")buildCelebrationsBook();if(id==="wheel")renderCelebrationsArchive();renderArchives();bind()}
@@ -420,7 +429,7 @@ function houseCusps(asc,system){
 }
 function fmtZodiac(lon){let s=signs[Math.floor(norm360(lon)/30)][1],d=norm360(lon)%30;return `${s} ${d.toFixed(1)}°`}
 let deferredInstallPrompt=null;
-window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;let b=document.getElementById("installBanner");if(b)b.style.display="flex"});
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;});
 async function installApp(){if(deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null}else{alert("On iPhone/iPad: open the Share menu in Safari and choose Add to Home Screen. On supported Android browsers, use the browser Install or Add to Home Screen option.")}}
 if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost"))window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 
