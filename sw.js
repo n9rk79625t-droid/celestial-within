@@ -1,5 +1,5 @@
-const CACHE="celestial-within-v27";
-const CORE=["./astrology-engine.js","./manifest.webmanifest","./icon-192.svg","./icon-512.svg"];
+const CACHE="celestial-within-v28";
+const CORE=["./astrology-engine.js","./manifest.webmanifest","./icon-192.svg","./icon-512.svg","./assets/DDA04ACF-AF69-4E6A-87B2-3E31107556DB.png"];
 self.addEventListener("install",e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)))});
 self.addEventListener("activate",e=>e.waitUntil(Promise.all([self.clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))])));
 self.addEventListener("fetch",e=>{
