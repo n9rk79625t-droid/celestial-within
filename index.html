@@ -8,7 +8,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.svg">
 <title>Celestial Within — Esoteric Zodiac Journal</title>
-<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>\n<script src="astrology-engine.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+<script src="astrology-engine.js"></script>
 <style>
 :root{--night:#130d20;--plum:#281539;--violet:#6f4a91;--pink:#d98ab3;--rose:#f0bfd5;--gold:#d8b56c;--gold2:#f1d99b;--cream:#fff9f0;--ink:#2b2030;--muted:#7d6c82;--card:rgba(255,250,247,.95);--line:rgba(216,181,108,.35)}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#3b2050 0,transparent 30%),radial-gradient(circle at 90% 20%,#4b2446 0,transparent 28%),var(--night);color:var(--cream);font-family:Inter,system-ui,sans-serif}
@@ -216,6 +217,46 @@ footer{color:#876b80}
  #home .home-profile-note{grid-template-columns:auto 1fr}
  #home .home-profile-note button{grid-column:2}
 }
+
+/* Home polish after iPhone layout review */
+body:has(#home.active) header{
+ position:absolute!important;top:0;left:0;right:0;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ padding-top:calc(12px + env(safe-area-inset-top,0px))!important;
+ pointer-events:none;
+}
+body:has(#home.active) header .brand{display:none!important}
+body:has(#home.active) header .menu-toggle{margin-left:auto;background:#fffaf8dd!important;pointer-events:auto;box-shadow:0 4px 16px #7b3b5b12}
+body:has(#home.active) header nav{pointer-events:auto;background:#fffaf8f5;border-radius:16px;padding:8px!important;box-shadow:0 8px 24px #6c34551f}
+#home>.install-banner{
+ position:relative;z-index:6;
+ min-height:0!important;margin:8px 14px 0!important;padding:7px 9px 7px 12px!important;
+ border-radius:999px!important;background:#fffaf8d9!important;
+ border:1px solid #ead7cd!important;box-shadow:0 3px 12px #7a38500d!important;
+ color:#6a3151!important;
+}
+#home>.install-banner>div>b{font-size:.78rem!important;font-weight:600}
+#home>.install-banner .mini{display:none!important}
+#home>.install-banner button{padding:6px 11px!important;font-size:.72rem!important;border-radius:999px!important}
+#home .home-redesign{margin-top:0!important;padding-top:0!important}
+#home .home-title{padding-top:112px!important;padding-bottom:26px!important}
+#home .home-profile-note{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:14px!important;margin:5px 2px 15px!important;padding:16px!important;
+ min-height:0!important;border-radius:18px!important;
+}
+#home .profile-note-copy{min-width:0;flex:1}
+#home .profile-note-kicker{display:block;margin-bottom:5px;font-size:.63rem;letter-spacing:.16em;text-transform:uppercase;color:#b68755}
+#home .profile-note-copy b{display:block;font-family:Georgia,serif;font-size:1.08rem;line-height:1.15;font-weight:500;color:#67284f}
+#home .profile-note-copy p{margin:5px 0 0!important;font-size:.72rem!important;line-height:1.35!important;color:#76586a}
+#home .home-profile-note button{flex:0 0 auto!important;padding:8px 11px!important;font-size:.7rem!important;white-space:nowrap}
+@media(max-width:520px){
+ #home>.install-banner{margin:6px 10px 0!important}
+ #home .home-title{padding-top:104px!important}
+ #home .home-profile-note{display:flex!important;padding:13px 12px!important}
+ #home .home-profile-note button{grid-column:auto!important}
+}
 </style>
 </head>
 <body>
@@ -226,7 +267,7 @@ footer{color:#876b80}
  <div class="home-redesign">
   <div class="home-art home-art-top" aria-hidden="true"></div>
   <div class="home-title"><h1>Celestial Within</h1><div class="eyebrow">A sacred space for alignment, reflection &amp; intention</div></div>
-  <div id="personalGreeting" class="home-profile-note"><span>✦</span><div><b>Your celestial profile</b><p>Complete your Birth Profile to connect current transits with your natal houses.</p></div><button onclick="show('profile')">Create profile</button></div>
+  <div id="personalGreeting" class="home-profile-note"><div class="profile-note-copy"><span class="profile-note-kicker">Personal sky note</span><b>Complete your Birth Profile</b><p>Save your birth information to connect current transits with your natal houses.</p></div><button onclick="show('profile')">Create profile</button></div>
   <div class="home-feature-grid">
    <button class="home-feature" onclick="show('today')"><span class="home-icon icon-sky">☉</span><span><b>Today’s Sky</b><small>Moon phase, transits &amp; more</small></span></button>
    <button class="home-feature" onclick="show('journal')"><span class="home-icon icon-journal">▤</span><span><b>My Journal</b><small>Daily reflections</small></span></button>
