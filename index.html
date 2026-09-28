@@ -413,6 +413,25 @@ body:has(#home.active) main{padding-left:0!important;padding-right:0!important}
 
 /* Bottom motto: text directly over Home artwork */
 #home .home-motto{background:transparent!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+
+/* Today’s Sky: simple Sun icon card */
+#home .home-feature-sky{
+ display:grid!important;grid-template-columns:62px 1fr!important;align-items:center!important;gap:12px!important;
+ min-height:112px!important;padding:14px!important;
+ background:#fffaf8e8!important;background-image:none!important;
+}
+#home .home-feature-sky .home-icon{
+ display:block!important;width:62px!important;height:62px!important;
+ font-size:0!important;background:url("assets/24041173-81A0-4BC2-8FCB-E29962A1618D.png") center/contain no-repeat!important;
+}
+#home .home-feature-sky>span:last-child{
+ position:static!important;width:auto!important;display:flex!important;flex-direction:column!important;
+ align-items:flex-start!important;justify-content:center!important;text-align:left!important;
+ padding:0!important;background:none!important;text-shadow:none!important;
+}
+#home .home-feature-sky b{margin:0 0 5px!important;font-size:1.05rem!important;line-height:1.1!important}
+#home .home-feature-sky small{margin:0!important;font-size:.66rem!important;line-height:1.25!important;letter-spacing:.09em!important;text-transform:uppercase!important}
+@media(max-width:520px){#home .home-feature-sky{grid-template-columns:54px 1fr!important;min-height:104px!important;padding:12px!important;gap:10px!important}#home .home-feature-sky .home-icon{width:54px!important;height:54px!important}}
 </style>
 </head>
 <body>
