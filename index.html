@@ -493,6 +493,20 @@ body:has(#home.active) footer{padding:18px 20px calc(92px + env(safe-area-inset-
 #home .home-feature-journal>span:last-child,#home .home-feature-tarot>span:last-child,#home .home-feature-rituals>span:last-child{position:static!important;left:auto!important;right:auto!important;bottom:auto!important;width:100%!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:0!important;background:none!important;text-shadow:none!important}
 #home .home-feature-journal b,#home .home-feature-tarot b,#home .home-feature-rituals b{margin:0 0 3px!important}
 @media(max-width:520px){#home .home-feature-journal .home-icon,#home .home-feature-tarot .home-icon,#home .home-feature-rituals .home-icon{width:66px!important;height:66px!important;flex-basis:66px!important}}
+
+/* Home icon sizing + matching white circular Sun backing */
+#home .home-feature .home-icon{
+ width:84px!important;height:84px!important;flex:0 0 84px!important;
+ background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;
+}
+#home .home-feature-sky .home-icon{
+ border-radius:50%!important;
+ background-color:#fff!important;
+ box-shadow:0 1px 5px rgba(103,40,79,.08)!important;
+}
+@media(max-width:520px){
+ #home .home-feature .home-icon{width:80px!important;height:80px!important;flex-basis:80px!important}
+}
 </style>
 </head>
 <body>
