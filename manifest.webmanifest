@@ -4,20 +4,14 @@
   "description": "Personalized astrology, Moon, tarot, traditions and printable spiritual journal.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#130d20",
-  "theme_color": "#281539",
+  "background_color": "#fff8f7",
+  "theme_color": "#8a5f9e",
   "icons": [
     {
-      "src": "icon-192.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "assets/EF2A5E9B-2098-41F3-9A13-487C05A441BD.png",
+      "sizes": "1536x1536",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
