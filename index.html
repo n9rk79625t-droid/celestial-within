@@ -351,6 +351,14 @@ body:has(#home.active) header nav{pointer-events:auto;background:#fffaf8f5;borde
 #home .home-feature-tarot b{display:block!important;margin:0 0 3px!important;font-size:1.05rem!important;line-height:1.1!important}
 #home .home-feature-tarot small{display:block!important;margin:0!important;font-size:.63rem!important;line-height:1.15!important;letter-spacing:.12em!important;text-transform:uppercase!important}
 @media(max-width:520px){#home .home-feature-tarot{min-height:138px!important}}
+
+/* Spells & Rituals illustrated feature card */
+#home .home-feature-rituals{position:relative!important;overflow:hidden!important;isolation:isolate;display:block!important;padding:0!important;min-height:150px!important;background-image:linear-gradient(180deg,rgba(255,250,248,.02) 22%,rgba(255,250,248,.82) 76%,rgba(255,250,248,.97) 100%),url("assets/193AA4F8-BC4D-4AD0-8BD3-83E209CAE6EB.jpeg")!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important}
+#home .home-feature-rituals .home-icon{display:none!important}
+#home .home-feature-rituals>span:last-child{position:absolute!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:12px 10px 11px!important;background:linear-gradient(180deg,rgba(255,250,248,0),rgba(255,250,248,.84) 28%,rgba(255,250,248,.97) 100%)!important;text-shadow:0 1px 2px #fff!important}
+#home .home-feature-rituals b{display:block!important;margin:0 0 3px!important;font-size:1.05rem!important;line-height:1.1!important}
+#home .home-feature-rituals small{display:block!important;margin:0!important;font-size:.63rem!important;line-height:1.15!important;letter-spacing:.12em!important;text-transform:uppercase!important}
+@media(max-width:520px){#home .home-feature-rituals{min-height:138px!important}}
 </style>
 </head>
 <body>
@@ -367,7 +375,7 @@ body:has(#home.active) header nav{pointer-events:auto;background:#fffaf8f5;borde
    <button class="home-feature home-feature-natal" onclick="show('natal')"><span class="home-icon icon-natal">✧</span><span><b>Natal Chart</b><small>Your cosmic blueprint</small></span></button>
    <button class="home-feature home-feature-tarot" onclick="show('tarot')"><span class="home-icon icon-tarot">◇</span><span><b>Tarot</b><small>Insights &amp; guidance</small></span></button>
    <button class="home-feature home-feature-celebrations" onclick="show('wheel')"><span class="home-icon icon-celebrations">☾</span><span><b>Celebrations</b><small>Seasonal &amp; personal</small></span></button>
-   <button class="home-feature" onclick="show('recipes')"><span class="home-icon icon-rituals">◈</span><span><b>Spells &amp; Rituals</b><small>Intentions in action</small></span></button>
+   <button class="home-feature home-feature-rituals" onclick="show('recipes')"><span class="home-icon icon-rituals">◈</span><span><b>Spells &amp; Rituals</b><small>Intentions in action</small></span></button>
   </div>
   <div class="home-motto"><span>✦</span><p>As above, so within.</p><small>The stars don’t define me — they remind me who I already am.</small><span>✦</span></div>
   <div class="home-art home-art-bottom" aria-hidden="true"></div>
