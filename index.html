@@ -363,6 +363,11 @@ body:has(#home.active) header nav{pointer-events:auto;background:#fffaf8f5;borde
 /* Illustrated Home page background */
 #home .home-redesign{background-image:linear-gradient(180deg,rgba(255,248,247,.16),rgba(255,248,247,.10)),url("assets/2A25FB7B-474B-4A66-8B4C-BB928FC51B10.png")!important;background-size:cover!important;background-position:top center!important;background-repeat:no-repeat!important;background-attachment:scroll!important}
 #home .home-title,#home .home-profile-note,#home .home-feature-grid,#home .home-motto{position:relative;z-index:1}
+
+/* Home cleanup: remove background artwork/placeholders + whimsical wordmark */
+#home .home-redesign{background:#fff8f7!important;background-image:none!important}
+#home .home-art,#home .home-art-top,#home .home-art-bottom{display:none!important;background:none!important}
+#home .home-title h1{font-family:"Brush Script MT","Segoe Script","Snell Roundhand","URW Chancery L",cursive!important;font-style:normal!important;font-weight:500!important;letter-spacing:.015em!important;font-size:clamp(3rem,11vw,4.8rem)!important;line-height:.92!important;color:#67284f!important}
 </style>
 </head>
 <body>
