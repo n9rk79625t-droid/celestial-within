@@ -308,6 +308,25 @@ body:has(#home.active) header nav{pointer-events:auto;background:#fffaf8f5;borde
 }
 #home .home-feature-sky b{display:block!important;margin:0 0 3px!important;font-size:1.05rem!important;line-height:1.1!important}
 #home .home-feature-sky small{display:block!important;margin:0!important;font-size:.63rem!important;line-height:1.15!important;letter-spacing:.12em!important;text-transform:uppercase!important}
+
+/* Natal Chart illustrated feature card */
+#home .home-feature-natal{
+ position:relative!important;overflow:hidden!important;isolation:isolate;
+ display:block!important;padding:0!important;min-height:150px!important;
+ background-image:linear-gradient(180deg,rgba(255,250,248,.02) 22%,rgba(255,250,248,.82) 76%,rgba(255,250,248,.97) 100%),url("assets/FE82FC00-EDCE-43C5-8546-20CFF43A6C94.png")!important;
+ background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;
+}
+#home .home-feature-natal .home-icon{display:none!important}
+#home .home-feature-natal>span:last-child{
+ position:absolute!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;align-items:center!important;
+ justify-content:center!important;text-align:center!important;padding:12px 10px 11px!important;
+ background:linear-gradient(180deg,rgba(255,250,248,0),rgba(255,250,248,.84) 28%,rgba(255,250,248,.97) 100%)!important;
+ text-shadow:0 1px 2px #fff!important;
+}
+#home .home-feature-natal b{display:block!important;margin:0 0 3px!important;font-size:1.05rem!important;line-height:1.1!important}
+#home .home-feature-natal small{display:block!important;margin:0!important;font-size:.63rem!important;line-height:1.15!important;letter-spacing:.12em!important;text-transform:uppercase!important}
+@media(max-width:520px){#home .home-feature-natal{min-height:138px!important}}
 </style>
 </head>
 <body>
@@ -321,7 +340,7 @@ body:has(#home.active) header nav{pointer-events:auto;background:#fffaf8f5;borde
   <div class="home-feature-grid">
    <button class="home-feature home-feature-sky" onclick="show('today')"><span class="home-icon icon-sky">☉</span><span><b>Today’s Sky</b><small>Moon phase, transits &amp; more</small></span></button>
    <button class="home-feature" onclick="show('journal')"><span class="home-icon icon-journal">▤</span><span><b>My Journal</b><small>Daily reflections</small></span></button>
-   <button class="home-feature" onclick="show('natal')"><span class="home-icon icon-natal">✧</span><span><b>Natal Chart</b><small>Your cosmic blueprint</small></span></button>
+   <button class="home-feature home-feature-natal" onclick="show('natal')"><span class="home-icon icon-natal">✧</span><span><b>Natal Chart</b><small>Your cosmic blueprint</small></span></button>
    <button class="home-feature" onclick="show('tarot')"><span class="home-icon icon-tarot">◇</span><span><b>Tarot</b><small>Insights &amp; guidance</small></span></button>
    <button class="home-feature" onclick="show('wheel')"><span class="home-icon icon-celebrations">☾</span><span><b>Celebrations</b><small>Seasonal &amp; personal</small></span></button>
    <button class="home-feature" onclick="show('recipes')"><span class="home-icon icon-rituals">◈</span><span><b>Spells &amp; Rituals</b><small>Intentions in action</small></span></button>
