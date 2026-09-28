@@ -432,6 +432,19 @@ body:has(#home.active) main{padding-left:0!important;padding-right:0!important}
 #home .home-feature-sky b{margin:0 0 5px!important;font-size:1.05rem!important;line-height:1.1!important}
 #home .home-feature-sky small{margin:0!important;font-size:.66rem!important;line-height:1.25!important;letter-spacing:.09em!important;text-transform:uppercase!important}
 @media(max-width:520px){#home .home-feature-sky{grid-template-columns:54px 1fr!important;min-height:104px!important;padding:12px!important;gap:10px!important}#home .home-feature-sky .home-icon{width:54px!important;height:54px!important}}
+
+/* Today’s Sky: center Sun icon above copy */
+#home .home-feature-sky{
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ gap:7px!important;min-height:138px!important;padding:12px 10px!important;
+}
+#home .home-feature-sky .home-icon{width:58px!important;height:58px!important;flex:0 0 58px!important}
+#home .home-feature-sky>span:last-child{
+ position:static!important;width:100%!important;display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;text-align:center!important;padding:0!important;
+}
+#home .home-feature-sky b{margin:0 0 3px!important}
+@media(max-width:520px){#home .home-feature-sky{min-height:138px!important;padding:10px 8px!important;gap:6px!important}#home .home-feature-sky .home-icon{width:54px!important;height:54px!important;flex-basis:54px!important}}
 </style>
 </head>
 <body>
