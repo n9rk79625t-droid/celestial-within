@@ -471,6 +471,18 @@ body:has(#home.active) main{padding-left:0!important;padding-right:0!important}
 }
 #home .home-feature-celebrations b{margin:0 0 3px!important}
 @media(max-width:520px){#home .home-feature-celebrations .home-icon{width:66px!important;height:66px!important;flex-basis:66px!important}}
+
+/* Home mobile spacing correction + force Celebrations icon refresh */
+body:has(#home.active) main{padding-bottom:0!important}
+#home{padding-bottom:0!important}
+#home .home-redesign{padding-bottom:12px!important;min-height:0!important}
+#home .home-motto{margin-top:14px!important;margin-bottom:8px!important;padding:18px 18px 20px!important}
+body:has(#home.active) footer{padding:18px 20px calc(92px + env(safe-area-inset-bottom,0px))!important;margin:0!important}
+#home .home-feature-celebrations{background:#fffaf8e8!important;background-image:none!important}
+#home .home-feature-celebrations .home-icon{
+ display:block!important;background-image:url("assets/B5FDAF78-5B22-4D9C-BBDD-58DCE84993E4.png")!important;
+ background-position:center!important;background-size:contain!important;background-repeat:no-repeat!important;
+}
 </style>
 </head>
 <body>
