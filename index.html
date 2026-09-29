@@ -521,6 +521,13 @@ body:has(#home.active) footer{background:transparent!important}
 #home .home-feature b{margin:0 0 4px!important;line-height:1.08!important}
 #home .home-feature small{margin:0!important;line-height:1.2!important}
 @media(max-width:520px){#home .home-feature-grid{grid-auto-rows:164px!important;gap:14px!important}#home .home-feature{padding:10px 7px!important;gap:7px!important}#home .home-feature .home-icon{width:80px!important;height:80px!important;flex-basis:80px!important}}
+
+/* Keep personalized sky note in the Home layout after Birth Profile is saved */
+#home #personalGreeting.transit-card{margin:4px 16px 16px!important;padding:22px 20px!important;border:1px solid #e4cfc3!important;border-radius:22px!important;background:rgba(255,250,248,.93)!important;box-shadow:0 5px 18px rgba(99,45,76,.08)!important;width:auto!important}
+#home #personalGreeting.transit-card h3{margin:14px 0 12px!important;line-height:1.18!important}
+#home #personalGreeting.transit-card p{font-size:1rem!important;line-height:1.55!important;margin:10px 0!important}
+#home #personalGreeting.transit-card .mini{font-size:.82rem!important}
+#home #personalGreeting.transit-card button{margin-top:8px!important}
 </style>
 </head>
 <body>
@@ -751,7 +758,7 @@ function renderPersonalDashboard(){
  let el=document.getElementById("personalGreeting");if(!el)return;let n=getNatal(),name=localStorage.getItem("cw-profile-name")||"";
  if(!n){el.innerHTML=`<div class="eyebrow">Personal sky note</div><h3>Complete your Birth Profile</h3><p>Save your birth information to connect current transits with your natal houses.</p><button onclick="show('profile')">Create profile</button>`;return}
  let cur=planetLongitudes(new Date()),moon=cur.find(x=>x.name==="Moon"),sun=cur.find(x=>x.name==="Sun"),mh=moon?houseOfLongitude(moon.lon,n.cusps):null,sh=sun?houseOfLongitude(sun.lon,n.cusps):null;
- el.className="card transit-card";el.innerHTML=`<div class="eyebrow">${name?esc(name)+" · ":""}Today’s personalized sky</div><h3>${moon?`☾ Moon transiting your ${mh}${mh===1?"st":mh===2?"nd":mh===3?"rd":"th"} house`:"Current transits"}</h3><p>${moon?transitPrompt("the Moon",mh):""}</p>${sun?`<p class="mini">☉ Sun: ${fmtZodiac(sun.lon)} · natal house ${sh}</p>`:""}<button onclick="show('today')">View today’s sky</button>`;
+ el.className="home-profile-note card transit-card";el.innerHTML=`<div class="eyebrow">${name?esc(name)+" · ":""}Today’s personalized sky</div><h3>${moon?`☾ Moon transiting your ${mh}${mh===1?"st":mh===2?"nd":mh===3?"rd":"th"} house`:"Current transits"}</h3><p>${moon?transitPrompt("the Moon",mh):""}</p>${sun?`<p class="mini">☉ Sun: ${fmtZodiac(sun.lon)} · natal house ${sh}</p>`:""}<button onclick="show('today')">View today’s sky</button>`;
 }
 let editDailyIndex=null;
 function clearDailyForm(){editDailyIndex=null;let t=document.getElementById("calendarTitle"),x=document.getElementById("calendarText");if(t)t.value="";if(x)x.value=""}
