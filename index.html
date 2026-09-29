@@ -582,6 +582,28 @@ body:has(#home.active) footer{background:transparent!important}
 #today .today-settings-body{padding-top:14px}
 #today .today-reflection-card button{margin-top:6px}
 @media(min-width:760px){#today .today-dashboard-stack{grid-template-columns:1fr 1fr}#today .today-chart-card,#today .today-planets-card,#today .today-reflection-card,#today .today-settings-card{grid-column:1/-1}}
+
+/* Show the standard Celestial Within header on Home */
+body:has(#home.active) header{
+ position:relative!important;top:auto!important;left:auto!important;right:auto!important;
+ background:#fffaf8f2!important;
+ border-bottom:1px solid rgba(212,180,142,.55)!important;
+ box-shadow:0 3px 12px rgba(103,40,79,.05)!important;
+ backdrop-filter:blur(8px)!important;
+ padding-top:calc(14px + env(safe-area-inset-top,0px))!important;
+ pointer-events:auto!important;
+}
+body:has(#home.active) header .brand{
+ display:block!important;
+ color:#6b2854!important;
+}
+body:has(#home.active) header .menu-toggle{
+ margin-left:auto!important;
+ background:#fffaf8!important;
+ border:1px solid rgba(212,180,142,.72)!important;
+ box-shadow:0 4px 14px rgba(103,40,79,.06)!important;
+}
+body:has(#home.active) header nav{pointer-events:auto!important}
 </style>
 </head>
 <body>
