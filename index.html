@@ -552,6 +552,25 @@ body:has(#home.active) footer{background:transparent!important}
  border-color:#b98a4f!important;
  box-shadow:inset 0 0 0 3px rgba(255,255,255,.8),inset 0 0 0 4px rgba(197,155,98,.42),0 7px 19px rgba(103,40,79,.12)!important;
 }
+
+/* Personalized sky framing + transparent Home title v61 */
+#home #personalGreeting.transit-card{
+ position:relative!important;overflow:hidden!important;
+ border:1px solid rgba(193,151,91,.72)!important;border-radius:18px!important;
+ background:rgba(255,250,248,.93)!important;
+ box-shadow:inset 0 0 0 3px rgba(255,255,255,.72),inset 0 0 0 4px rgba(215,190,151,.34),0 5px 16px rgba(103,40,79,.08)!important;
+}
+#home #personalGreeting.transit-card::before,#home #personalGreeting.transit-card::after{
+ position:absolute!important;z-index:3!important;color:#c59b62!important;font-family:Georgia,serif!important;
+ font-size:15px!important;line-height:1!important;text-shadow:0 0 7px rgba(255,255,255,.95)!important;pointer-events:none!important;
+}
+#home #personalGreeting.transit-card::before{content:"✦"!important;top:8px!important;left:10px!important}
+#home #personalGreeting.transit-card::after{content:"✧"!important;right:10px!important;bottom:8px!important}
+#home .home-title{background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important}
+#home .home-title h1{
+ color:#4d2143!important;
+ text-shadow:0 2px 0 rgba(255,250,248,.92),0 0 7px rgba(255,250,248,.95),0 3px 10px rgba(69,30,61,.22)!important;
+}
 </style>
 </head>
 <body>
