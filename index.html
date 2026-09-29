@@ -596,6 +596,42 @@ body:has(#home.active) header .menu-toggle{
  box-shadow:0 4px 16px rgba(123,59,91,.06)!important;pointer-events:auto!important;
 }
 body:has(#home.active) header nav{pointer-events:auto!important}
+
+/* Today’s Sky — Celestial Crystal base design */
+body:has(#today.active) main{
+ background-color:#fff8f7!important;
+ background-image:linear-gradient(rgba(255,248,247,.78),rgba(255,248,247,.84)),url("assets/1F593E96-1FDB-4433-ACCA-0594D379A338.png")!important;
+ background-size:cover!important;background-position:center top!important;background-attachment:scroll!important;
+}
+#today.today-dashboard{padding-top:18px!important;padding-bottom:28px!important}
+#today.today-dashboard>h1{
+ font-family:"Brush Script MT","Segoe Script","Snell Roundhand","URW Chancery L",cursive!important;
+ font-weight:500!important;font-size:clamp(3rem,10vw,4.4rem)!important;line-height:.95!important;
+ color:#4d2143!important;text-shadow:0 2px 0 rgba(255,250,248,.9),0 0 7px rgba(255,250,248,.9)!important;
+ margin:8px 0 20px!important;
+}
+#today.today-dashboard>.eyebrow{color:#9b704d!important;letter-spacing:.18em!important}
+#today .today-dashboard-stack{gap:16px!important}
+#today .today-dashboard-stack>.card{
+ position:relative!important;overflow:hidden!important;
+ border:1px solid rgba(193,151,91,.72)!important;border-radius:19px!important;
+ background:rgba(255,250,248,.92)!important;
+ box-shadow:inset 0 0 0 3px rgba(255,255,255,.7),inset 0 0 0 4px rgba(215,190,151,.3),0 5px 16px rgba(103,40,79,.08)!important;
+ padding:20px!important;color:#5d294a!important;
+}
+#today .today-dashboard-stack>.card::before{content:"✦"!important;position:absolute!important;top:9px!important;left:11px!important;color:#c59b62!important;font-size:13px!important}
+#today .today-dashboard-stack>.card::after{content:"✧"!important;position:absolute!important;right:11px!important;bottom:9px!important;color:#c59b62!important;font-size:13px!important}
+#today .today-dashboard-stack h2,#today .today-dashboard-stack h3{color:#67284f!important;font-family:Georgia,serif!important}
+#today .today-dashboard-stack .eyebrow{color:#a07855!important;letter-spacing:.14em!important}
+#today .today-chart-card{
+ border:1px solid rgba(193,151,91,.72)!important;border-radius:22px!important;
+ box-shadow:0 7px 20px rgba(103,40,79,.1)!important;overflow:hidden!important;
+}
+#today .today-reflection-card .btn.gold,#today .today-personal-card button{
+ border-color:rgba(193,151,91,.72)!important;background:#fffaf8!important;color:#67284f!important;
+}
+#today .today-settings-card summary{color:#67284f!important}
+@media(max-width:520px){#today.today-dashboard{padding-left:12px!important;padding-right:12px!important}#today .today-dashboard-stack>.card{padding:18px 16px!important}}
 </style>
 </head>
 <body>
