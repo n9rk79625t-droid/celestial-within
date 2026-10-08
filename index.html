@@ -600,9 +600,16 @@ body:has(#home.active) header nav{pointer-events:auto!important}
 
 /* Today’s Sky — Celestial Crystal base design */
 body:has(#today.active) main{
+ position:relative;isolation:isolate;
  background-color:#fff8f7!important;
- background-image:linear-gradient(rgba(255,248,247,.78),rgba(255,248,247,.84)),url("assets/1F593E96-1FDB-4433-ACCA-0594D379A338.png")!important;
- background-size:cover!important;background-position:center top!important;background-attachment:scroll!important;
+ background-image:none!important;
+}
+body:has(#today.active) main::before{
+ content:"";position:absolute;top:0;left:0;width:100%;aspect-ratio:2 / 3;
+ z-index:-1;pointer-events:none;
+ background:url("assets/todays-sky-blush-clouds-v1.webp") center top / 100% auto no-repeat;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%);
 }
 #today.today-dashboard{padding-top:18px!important;padding-bottom:28px!important}
 #today.today-dashboard>h1{
