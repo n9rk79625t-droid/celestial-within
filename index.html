@@ -668,6 +668,16 @@ body:has(#moon.active) main::before{
 #moon>section{margin:0}
 #moon .card{border:1px solid rgba(193,151,91,.72);border-radius:18px;background:rgba(255,250,248,.94);box-shadow:inset 0 0 0 3px rgba(255,255,255,.72),inset 0 0 0 4px rgba(215,190,151,.34),0 5px 16px rgba(103,40,79,.08)}
 @media(max-width:520px){#moon.active,#moon>.grid{gap:14px}}
+/* Tarot Temple: full-width sanctuary artwork with a soft scrolling fade. */
+body:has(#tarot.active) main{position:relative;isolation:isolate;background-color:#fff8f7!important;background-image:none!important}
+body:has(#tarot.active) main::before{
+ content:"";position:absolute;top:0;left:0;width:100%;aspect-ratio:2 / 3;
+ z-index:-1;pointer-events:none;
+ background:url("assets/tarot-temple-sanctuary-v1.webp") center top / 100% auto no-repeat;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%);
+}
+#tarot>h1,#tarot>.eyebrow{color:#351c36;text-shadow:0 1px 2px #fffaf8,0 0 8px #fffaf8}
 /* Realistic Home background */
 body:has(#home.active) main{
  background-color:#fff8f7!important;
