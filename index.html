@@ -650,6 +650,16 @@ body:has(#today.active) main::before{
 #today #astroWheel .planetdot{box-sizing:border-box;z-index:2;margin:0;transform:translate(-50%,-50%);line-height:1}
 #today #astroWheel .planet-guide{position:absolute;height:1px;transform-origin:left center;background:#a0785580;pointer-events:none;z-index:1}
 #today .today-chart-card>p.mini{color:#6e4966!important}
+/* Moon Temple: preserve the full sanctuary width and fade into blush. */
+body:has(#moon.active) main{position:relative;isolation:isolate;background-color:#fff8f7!important;background-image:none!important}
+body:has(#moon.active) main::before{
+ content:"";position:absolute;top:0;left:0;width:100%;aspect-ratio:2 / 3;
+ z-index:-1;pointer-events:none;
+ background:url("assets/moon-temple-sanctuary-v1.webp") center top / 100% auto no-repeat;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%);
+}
+#moon>h1,#moon>.eyebrow{color:#351c36;text-shadow:0 1px 2px #fffaf8,0 0 8px #fffaf8}
 /* Realistic Home background */
 body:has(#home.active) main{
  background-color:#fff8f7!important;
