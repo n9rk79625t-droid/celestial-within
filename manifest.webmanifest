@@ -8,9 +8,9 @@
   "theme_color": "#8a5f9e",
   "icons": [
     {
-      "src": "assets/EF2A5E9B-2098-41F3-9A13-487C05A441BD.png",
-      "sizes": "1536x1536",
-      "type": "image/png",
+      "src": "assets/8557D32F-DB60-42E1-BE51-6C717F7AA4F5.jpeg",
+      "type": "image/jpeg",
+      "sizes": "any",
       "purpose": "any"
     }
   ]
