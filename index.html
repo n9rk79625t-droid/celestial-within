@@ -783,7 +783,8 @@ body:has(#home.active) main{
 <div id="moon" class="panel"><div class="eyebrow">Lunar practice</div><h1>Moon Temple</h1><div id="moonCurrent"></div>
  <div class="grid"><div class="card"><h3>Moon Practice Ideas</h3><p><b>New:</b> write one intention and choose one grounded action.</p><p><b>Waxing:</b> build, practice, nourish momentum.</p><p><b>Full:</b> illuminate what has become visible; gratitude and release reflection.</p><p><b>Waning:</b> simplify, integrate, rest, clear your space.</p></div>
  <div class="card"><h3>Meditation Ideas</h3><p>Moon-breath meditation • candle-gaze reflection • body scan • visualization of releasing or receiving • silent observation outdoors.</p></div>
- <div class="card"><h3>Moon Journal</h3><label>Date / phase</label><input data-save="moon-date"><label>What am I noticing?</label><textarea data-save="moon-journal"></textarea><label>Practice or ritual</label><textarea data-save="moon-practice"></textarea></div></div>
+ <div class="card"><h3>Moon Journal</h3><label>Entry date</label><input id="moonEntryDate" type="date" data-save="moon-entry-date"><label>Date / phase note</label><input id="moonDateNote" data-save="moon-date"><label>What am I noticing?</label><textarea id="moonJournalText" data-save="moon-journal"></textarea><label>Practice or ritual</label><textarea id="moonPracticeText" data-save="moon-practice"></textarea><div class="entry-actions"><button onclick="saveMoonEntry()">Save Moon Entry</button><button onclick="newMoonEntry()">Start New Entry</button></div><p id="moonJournalStatus" class="mini" role="status"></p></div></div>
+ <section><div class="card"><h3>Moon Journal Entries</h3><p class="mini">Each saved entry’s phase reflects noon on its selected date in your device’s timezone.</p><div id="moonJournalEntries"></div></div></section>
  <section><div class="card"><h3>Archive a Moon Tradition</h3><input id="moonTradName" placeholder="Tradition name"><textarea id="moonTradText" placeholder="What do you do? Why does it matter?"></textarea><button onclick="archive('moon')">Archive tradition</button><div id="moonArchive"></div></div></section>
 </div>
 
@@ -860,13 +861,65 @@ function setCelebrationTab(t){celebrationTab=t;renderCelebrationsArchive()}
 function wheelRank(x){let i=wheelOrder.indexOf(x.wheel);return i<0?99:i}
 function renderCelebrationsArchive(filter){let el=document.getElementById("wheelArchive");if(!el)return;let base=celebrationTab==="celebration"?JSON.parse(localStorage.getItem("cw-observances")||"[]"):JSON.parse(localStorage.getItem("cw-recipes")||"[]"),items=base.map((x,i)=>Object.assign({_i:i},x)).filter(x=>celebrationTab==="celebration"||x.type===celebrationTab);if(filter)items=items.filter(x=>x.wheel===filter);items.sort((a,b)=>wheelRank(a)-wheelRank(b));if(!items.length){el.innerHTML='<p class="mini">No '+celebrationTab+' entries yet.</p>';return}el.innerHTML=items.map(x=>celebrationTab==="celebration"?'<div class="archive-card"><div class="eyebrow">'+esc(x.wheel)+'</div><h3>'+esc(x.kind)+'</h3><p><b>Theme:</b> '+esc(x.theme)+'</p><p><b>Deities honored:</b> '+esc(x.deities)+'</p><p><b>Offerings:</b> '+esc(x.offerings)+'</p><p><b>Food / meals:</b> '+esc(x.food)+'</p><p><b>Incantations / prayers:</b> '+esc(x.prayer)+'</p><p><b>Spells / rituals:</b> '+esc(x.working)+'</p><p>'+esc(x.memory)+'</p><div class="entry-actions"><button onclick="editCelebration('+x._i+')">Edit</button><button onclick="deleteCelebration('+x._i+')">Delete</button></div></div>':'<div class="archive-card"><div class="eyebrow">'+esc(x.wheel)+'</div><h3>'+esc((x.values&&x.values[0])||x.type)+'</h3>'+x.labels.slice(1).map((l,i)=>'<p><b>'+esc(l)+':</b> '+esc(x.values[i+1])+'</p>').join("")+(x.steps&&x.steps.length?'<h4>Steps</h4><ol>'+x.steps.map(st=>'<li>'+esc(st)+'</li>').join("")+'</ol>':"")+'<div class="entry-actions"><button onclick="openRecipe(\''+x.type+'\',true,'+x._i+')">Edit</button><button onclick="deleteRecipe('+x._i+')">Delete</button></div></div>').join("")}
 function bind(){document.querySelectorAll("[data-save]").forEach(el=>{let k="cw-"+el.dataset.save;if(localStorage.getItem(k)!=null)el.value=localStorage.getItem(k);el.oninput=()=>localStorage.setItem(k,el.value)})}
-function archive(type){let n=document.getElementById(type+"TradName"),t=document.getElementById(type+"TradText");if(!n.value.trim())return;let a=JSON.parse(localStorage.getItem("cw-archive-"+type)||"[]");a.unshift({name:n.value,text:t.value,date:new Date().toLocaleDateString()});localStorage.setItem("cw-archive-"+type,JSON.stringify(a));n.value=t.value="";renderArchives()}
-function renderArchives(){["moon","wheel"].forEach(type=>{let el=document.getElementById(type+"Archive");if(!el)return;let a=JSON.parse(localStorage.getItem("cw-archive-"+type)||"[]");el.innerHTML=a.map(x=>`<div class="archive-item"><b>${x.name}</b> <span class="mini">${x.date}</span><p>${x.text}</p></div>`).join("")})}
+function archive(type){let n=document.getElementById(type+"TradName"),t=document.getElementById(type+"TradText");if(!n.value.trim())return;try{let a=JSON.parse(localStorage.getItem("cw-archive-"+type)||"[]");if(!Array.isArray(a))throw Error("Invalid archive");a.unshift({name:n.value,text:t.value,date:new Date().toLocaleDateString()});localStorage.setItem("cw-archive-"+type,JSON.stringify(a));n.value=t.value="";renderArchives()}catch(e){let el=document.getElementById(type+"Archive");if(el)el.textContent="This tradition could not be saved. Your draft and stored archive have been preserved."}}
+function renderArchives(){["moon","wheel"].forEach(type=>{let el=document.getElementById(type+"Archive");if(!el)return;try{let a=JSON.parse(localStorage.getItem("cw-archive-"+type)||"[]");if(!Array.isArray(a))throw Error("Invalid archive");el.innerHTML=a.map(x=>`<div class="archive-item"><b>${esc(x.name)}</b> <span class="mini">${esc(x.date)}</span><p>${esc(x.text).replace(/\n/g,"<br>")}</p></div>`).join("")}catch(e){el.textContent="Your saved archive could not be read. Its stored data has been preserved."}})}
 function zodiacName(lon){return signs[Math.floor(((lon%360)+360)%360/30)][1]}
-function phaseName(a){let names=["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"];return names[Math.floor(((a+22.5)%360)/45)%8]}
-function fallbackPhase(){let syn=29.53058867, known=Date.UTC(2000,0,6,18,14), days=(Date.now()-known)/86400000, age=((days%syn)+syn)%syn;return age/syn*360}
-function moonData(){let a;try{a=(typeof Astronomy!=="undefined"&&Astronomy.MoonPhase)?Astronomy.MoonPhase(new Date()):fallbackPhase()}catch(e){a=fallbackPhase()}return {angle:a,name:phaseName(a),illum:(1-Math.cos(a*Math.PI/180))/2}}
-function renderMoon(){let m=moonData();document.getElementById("moonCurrent").innerHTML=`<div class="card"><div class="eyebrow">Current phase</div><h2>${m.name}</h2><p>Approx. ${(m.illum*100).toFixed(0)}% illuminated. Use the phase as a reflective rhythm rather than a prediction.</p></div>`}
+function phaseName(a){
+ if(!Number.isFinite(a))return "Phase unavailable";
+ a=((a%360)+360)%360;
+ // Primary phase labels cover only a narrow one-degree event window.
+ if(a<=1||a>=359)return "New Moon";
+ if(Math.abs(a-90)<=1)return "First Quarter";
+ if(Math.abs(a-180)<=1)return "Full Moon";
+ if(Math.abs(a-270)<=1)return "Last Quarter";
+ return a<90?"Waxing Crescent":a<180?"Waxing Gibbous":a<270?"Waning Gibbous":"Waning Crescent";
+}
+function fallbackPhase(date=new Date()){let syn=29.53058867, known=Date.UTC(2000,0,6,18,14), days=(date.getTime()-known)/86400000, age=((days%syn)+syn)%syn;return age/syn*360}
+function moonData(date=new Date()){
+ try{
+  if(typeof Astronomy==="undefined"||typeof Astronomy.MoonPhase!=="function"||typeof Astronomy.Illumination!=="function")throw Error("Moon library unavailable");
+  let a=Astronomy.MoonPhase(date),illum=Astronomy.Illumination(Astronomy.Body.Moon,date).phase_fraction;
+  if(!Number.isFinite(a)||a<0||a>=360||!Number.isFinite(illum)||illum<0||illum>1)throw Error("Invalid Moon data");
+  return {angle:a,name:phaseName(a),illum,approximate:false,date};
+ }catch(e){let a=fallbackPhase(date);return {angle:a,name:phaseName(a),illum:(1-Math.cos(a*Math.PI/180))/2,approximate:true,date}}
+}
+function renderMoon(){
+ let m=moonData(),el=document.getElementById("moonCurrent");if(!el)return;
+ el.innerHTML=`<div class="card"><div class="eyebrow">${m.approximate?"Estimated phase":"Current phase"}</div><h2>${m.name}</h2><p>${(m.illum*100).toFixed(1)}% illuminated. Use the phase as a reflective rhythm rather than a prediction.</p>${m.approximate?'<p class="mini">The precise Moon calculation is unavailable. This lunar-cycle estimate may differ from the actual phase; reconnect and reload for precise data.</p>':""}<p class="mini">Updated ${esc(m.date.toLocaleString([], {dateStyle:"medium",timeStyle:"short"}))}</p></div>`;
+ let input=document.getElementById("moonEntryDate");if(input&&!input.value&&!localStorage.getItem("cw-moon-entry-date")){input.value=moonLocalDate();localStorage.setItem("cw-moon-entry-date",input.value)}
+ renderMoonEntries();
+}
+function moonLocalDate(date=new Date()){return date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0")}
+function readMoonEntries(){let a=JSON.parse(localStorage.getItem("cw-moon-entries")||"[]");if(!Array.isArray(a)||a.some(x=>!x||typeof x.id!=="string"||typeof x.d!=="string"||typeof x.journal!=="string"||typeof x.practice!=="string"))throw Error("Invalid Moon entries");return a}
+function saveMoonEntry(){
+ let status=document.getElementById("moonJournalStatus"),get=id=>document.getElementById(id).value;
+ try{
+  let d=get("moonEntryDate"),journal=get("moonJournalText"),practice=get("moonPracticeText"),phaseNote=get("moonDateNote");
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d)||!Number.isFinite(new Date(d+"T12:00:00").getTime())||moonLocalDate(new Date(d+"T12:00:00"))!==d){status.textContent="Choose a valid entry date.";return false}
+  if(!journal.trim()&&!practice.trim()&&!phaseNote.trim()){status.textContent="Write a reflection, phase note or practice before saving.";return false}
+  let a=readMoonEntries(),id=localStorage.getItem("cw-moon-editing-id"),i=a.findIndex(x=>x.id===id),m=moonData(new Date(d+"T12:00:00"));
+  let entry={id:i>=0?id:Date.now().toString(36)+Math.random().toString(36).slice(2),d,journal,practice,phaseNote,phase:m.name,illum:m.illum,approximate:m.approximate};
+  if(i>=0)a[i]=entry;else a.unshift(entry);
+  localStorage.setItem("cw-moon-entries",JSON.stringify(a));localStorage.setItem("cw-moon-editing-id",entry.id);
+  status.textContent=i>=0?"Moon entry updated.":"Moon entry saved. Start a new entry when you’re ready.";renderMoonEntries();return true;
+ }catch(e){status.textContent="The entry could not be saved. Your draft and stored entries have been preserved.";return false}
+}
+function newMoonEntry(){
+ let journal=document.getElementById("moonJournalText"),practice=document.getElementById("moonPracticeText"),note=document.getElementById("moonDateNote");
+ if((journal.value.trim()||practice.value.trim()||note.value.trim())&&!saveMoonEntry())return;
+ try{localStorage.removeItem("cw-moon-editing-id");for(const [el,key,value] of [[journal,"moon-journal",""],[practice,"moon-practice",""],[note,"moon-date",""],[document.getElementById("moonEntryDate"),"moon-entry-date",moonLocalDate()]]){localStorage.setItem("cw-"+key,value);el.value=value}document.getElementById("moonJournalStatus").textContent="New draft ready. Your previous entry is saved."}catch(e){document.getElementById("moonJournalStatus").textContent="A new draft could not be started. Your saved entries remain available."}
+}
+function editMoonEntry(index){
+ try{let x=readMoonEntries().slice().sort((a,b)=>b.d.localeCompare(a.d))[index];if(!x)return;
+  if(x.id===localStorage.getItem("cw-moon-editing-id")){document.getElementById("moonJournalStatus").textContent="This entry is already open above. Your draft is unchanged.";return}
+  if(["moonJournalText","moonPracticeText","moonDateNote"].some(id=>document.getElementById(id).value.trim())&&!saveMoonEntry())return;
+  for(const [id,key,value] of [["moonEntryDate","moon-entry-date",x.d],["moonDateNote","moon-date",x.phaseNote||""],["moonJournalText","moon-journal",x.journal||""],["moonPracticeText","moon-practice",x.practice||""]]){localStorage.setItem("cw-"+key,value);document.getElementById(id).value=value}
+  localStorage.setItem("cw-moon-editing-id",x.id);document.getElementById("moonJournalStatus").textContent="Editing saved entry.";
+ }catch(e){document.getElementById("moonJournalStatus").textContent="The saved entry could not be opened. Stored data has been preserved."}
+}
+function renderMoonEntries(){let el=document.getElementById("moonJournalEntries");if(!el)return;try{let a=readMoonEntries().slice().sort((a,b)=>b.d.localeCompare(a.d));el.innerHTML=a.length?a.map((x,i)=>'<article class="archive-item"><b>'+esc(x.d)+' · '+esc(x.phase)+(x.approximate?' (estimated)':'')+'</b>'+(x.phaseNote?'<p>'+esc(x.phaseNote)+'</p>':'')+'<p>'+esc(x.journal).replace(/\n/g,"<br>")+'</p>'+(x.practice?'<p><b>Practice / ritual:</b><br>'+esc(x.practice).replace(/\n/g,"<br>")+'</p>':'')+'<button onclick="editMoonEntry('+i+')">Edit entry</button></article>').join(""):'<p class="mini">Saved Moon entries will appear here. Your current draft stays above until you save it.</p>'}catch(e){el.textContent="Saved Moon entries could not be read. Their stored data has been preserved."}}
+function refreshLunarViews(){if(document.hidden)return;let active=id=>document.getElementById(id)?.classList.contains("active");if(active("moon"))renderMoon();if(active("today"))renderSky()}
+function startLunarRefresh(){document.addEventListener("visibilitychange",refreshLunarViews);window.addEventListener("pageshow",refreshLunarViews);window.addEventListener("focus",refreshLunarViews);setInterval(refreshLunarViews,60000)}
 
 function norm360(x){return ((x%360)+360)%360}
 function deg2rad(x){return x*Math.PI/180}
@@ -914,7 +967,7 @@ async function installApp(){if(deferredInstallPrompt){deferredInstallPrompt.prom
 if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost"))window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"}).then(reg=>reg.update()).catch(()=>{}));
 
 function paintMoonPhase(el,angle){if(!el)return;let a=norm360(angle),wax=a<180,illum=(1-Math.cos(a*Math.PI/180))/2,k=Math.abs(Math.cos(a*Math.PI/180))*50,lit="#f7f1e7",dark="#21152a";el.style.clipPath="none";el.style.transform="none";el.style.background=lit;if(a<0.5||a>359.5){el.style.background=dark;return}if(Math.abs(a-180)<0.5){el.style.background=lit;return}let left=wax?dark:lit,right=wax?lit:dark,term=a<90||a>270?dark:lit,side=(a<90||a>270)?k:50-k;el.style.background="linear-gradient(to right,"+left+" 0 50%,"+right+" 50% 100%)";el.style.setProperty("--moon-term",term);el.style.setProperty("--moon-side",side+"%");el.style.clipPath="ellipse("+Math.max(1,side)+"% 50% at 50% 50%)";if(a>=90&&a<=270){el.style.background=lit;el.style.clipPath="none";el.style.boxShadow="inset "+(wax?-1:1)*(50-k)+"px 0 0 "+dark}else{el.style.background=dark;el.style.clipPath="none";el.style.boxShadow="inset "+(wax?1:-1)*(50-k)+"px 0 0 "+lit}}
-function renderSky(){renderTodayPersonalSky();document.getElementById("todayDate").textContent=new Date().toLocaleString([], {dateStyle:"full",timeStyle:"short"});let m=moonData();document.getElementById("moonName").textContent=m.name;document.getElementById("moonInfo").textContent=`Approximately ${(m.illum*100).toFixed(1)}% illuminated`;let shade=document.getElementById("moonShade");paintMoonPhase(shade,m.angle);let wheel=document.getElementById("astroWheel");wheel.innerHTML="";
+function renderSky(){renderTodayPersonalSky();document.getElementById("todayDate").textContent=new Date().toLocaleString([], {dateStyle:"full",timeStyle:"short"});let m=moonData();document.getElementById("moonName").textContent=m.name;document.getElementById("moonInfo").textContent=`${m.approximate?"Estimated lunar cycle · ":""}${(m.illum*100).toFixed(1)}% illuminated`;let shade=document.getElementById("moonShade");paintMoonPhase(shade,m.angle);let wheel=document.getElementById("astroWheel");wheel.innerHTML="";
 let lat=parseFloat(localStorage.getItem("cw-latitude")),lon=parseFloat(localStorage.getItem("cw-longitude")),system=(document.getElementById("houseSystem")||{}).value||"whole";
 let cusps=Array.from({length:12},(_,i)=>i*30),angles=null;
 if(isFinite(lat)&&isFinite(lon)){angles=localAngles(new Date(),lat,lon);cusps=houseCusps(angles.asc,system);let ca=document.getElementById("chartAngles");if(ca)ca.innerHTML=`<div class="angle-pill"><b>ASC</b><br>${fmtZodiac(angles.asc)}</div><div class="angle-pill"><b>MC</b><br>${fmtZodiac(angles.mc)}</div><div class="angle-pill"><b>DSC</b><br>${fmtZodiac(angles.desc)}</div><div class="angle-pill"><b>IC</b><br>${fmtZodiac(angles.ic)}</div>`}
@@ -1041,6 +1094,6 @@ function printSection(id){
  el.classList.add("print-target");window.print();setTimeout(()=>el.classList.remove("print-target"),500);
 }
 
-bind();renderArchives();renderPersonalDashboard();let cd=document.getElementById("calendarDate");if(cd)cd.value=new Date().toISOString().slice(0,10);
+bind();renderArchives();renderPersonalDashboard();startLunarRefresh();let cd=document.getElementById("calendarDate");if(cd)cd.value=new Date().toISOString().slice(0,10);
 </script>
 </body></html>
