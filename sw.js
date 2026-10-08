@@ -1,5 +1,5 @@
-const CACHE="celestial-within-v70-sky-background";
-const CORE=["./index.html","./astrology-engine.js?v=20261008-calculations","./manifest.webmanifest","./icon-192.svg","./icon-512.svg","./assets/5154216B-3E71-4071-8D4F-108334B3C078.png","./assets/todays-sky-blush-clouds-v1.webp"];
+const CACHE="celestial-within-v71-chart-card-background";
+const CORE=["./index.html","./astrology-engine.js?v=20261008-calculations","./manifest.webmanifest","./icon-192.svg","./icon-512.svg","./assets/5154216B-3E71-4071-8D4F-108334B3C078.png","./assets/todays-sky-blush-clouds-v1.webp","./assets/todays-chart-crystal-border-v1.webp"];
 self.addEventListener("install",e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)))});
 self.addEventListener("activate",e=>e.waitUntil(Promise.all([self.clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith("celestial-within-")&&k!==CACHE).map(k=>caches.delete(k))))])));
 self.addEventListener("fetch",e=>{
