@@ -10,7 +10,7 @@
 <link rel="icon" type="image/jpeg" href="assets/8557D32F-DB60-42E1-BE51-6C717F7AA4F5.jpeg">
 <title>Celestial Within — Esoteric Zodiac Journal</title>
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
-<script src="astrology-engine.js"></script>
+<script src="astrology-engine.js?v=20261008-calculations"></script>
 <style>
 :root{--night:#130d20;--plum:#281539;--violet:#6f4a91;--pink:#d98ab3;--rose:#f0bfd5;--gold:#d8b56c;--gold2:#f1d99b;--cream:#fff9f0;--ink:#2b2030;--muted:#7d6c82;--card:rgba(255,250,247,.95);--line:rgba(216,181,108,.35)}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#3b2050 0,transparent 30%),radial-gradient(circle at 90% 20%,#4b2446 0,transparent 28%),var(--night);color:var(--cream);font-family:Inter,system-ui,sans-serif}
@@ -795,13 +795,11 @@ function obliquity(jd){let T=(jd-2451545.0)/36525;return 23.43929111-0.013004167
 function gmstDegrees(jd){let T=(jd-2451545.0)/36525;return norm360(280.46061837+360.98564736629*(jd-2451545)+0.000387933*T*T-T*T*T/38710000)}
 function localAngles(date,lat,lon){
  let jd=julianDate(date),theta=deg2rad(norm360(gmstDegrees(jd)+lon)),phi=deg2rad(lat),eps=deg2rad(obliquity(jd));
- // MC: ecliptic longitude intersecting local meridian.
- let mc=norm360(rad2deg(Math.atan2(Math.sin(theta)*Math.cos(eps)+Math.tan(phi)*Math.sin(eps)*0,Math.cos(theta))));
+ // MC: meridian ecliptic longitude; independent of latitude, with quadrant preserved.
+ let mc=norm360(rad2deg(Math.atan2(Math.sin(theta),Math.cos(theta)*Math.cos(eps))));
  // Ascendant formula; choose eastern horizon intersection.
  let asc=norm360(rad2deg(Math.atan2(-Math.cos(theta),Math.sin(theta)*Math.cos(eps)+Math.tan(phi)*Math.sin(eps))));
  asc=norm360(asc+180);
- // More stable MC expression independent of latitude.
- mc=norm360(rad2deg(Math.atan2(Math.sin(theta)*Math.cos(eps),Math.cos(theta))));
  return {asc,mc,desc:norm360(asc+180),ic:norm360(mc+180)};
 }
 function houseCusps(asc,system){
@@ -812,7 +810,7 @@ function fmtZodiac(lon){let s=signs[Math.floor(norm360(lon)/30)][1],d=norm360(lo
 let deferredInstallPrompt=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;});
 async function installApp(){if(deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null}else{alert("On iPhone/iPad: open the Share menu in Safari and choose Add to Home Screen. On supported Android browsers, use the browser Install or Add to Home Screen option.")}}
-if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost"))window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost"))window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"}).then(reg=>reg.update()).catch(()=>{}));
 
 function paintMoonPhase(el,angle){if(!el)return;let a=norm360(angle),wax=a<180,illum=(1-Math.cos(a*Math.PI/180))/2,k=Math.abs(Math.cos(a*Math.PI/180))*50,lit="#f7f1e7",dark="#21152a";el.style.clipPath="none";el.style.transform="none";el.style.background=lit;if(a<0.5||a>359.5){el.style.background=dark;return}if(Math.abs(a-180)<0.5){el.style.background=lit;return}let left=wax?dark:lit,right=wax?lit:dark,term=a<90||a>270?dark:lit,side=(a<90||a>270)?k:50-k;el.style.background="linear-gradient(to right,"+left+" 0 50%,"+right+" 50% 100%)";el.style.setProperty("--moon-term",term);el.style.setProperty("--moon-side",side+"%");el.style.clipPath="ellipse("+Math.max(1,side)+"% 50% at 50% 50%)";if(a>=90&&a<=270){el.style.background=lit;el.style.clipPath="none";el.style.boxShadow="inset "+(wax?-1:1)*(50-k)+"px 0 0 "+dark}else{el.style.background=dark;el.style.clipPath="none";el.style.boxShadow="inset "+(wax?1:-1)*(50-k)+"px 0 0 "+lit}}
 function renderSky(){renderTodayPersonalSky();document.getElementById("todayDate").textContent=new Date().toLocaleString([], {dateStyle:"full",timeStyle:"short"});let m=moonData();document.getElementById("moonName").textContent=m.name;document.getElementById("moonInfo").textContent=`Approximately ${(m.illum*100).toFixed(1)}% illuminated`;let shade=document.getElementById("moonShade");paintMoonPhase(shade,m.angle);let wheel=document.getElementById("astroWheel");wheel.innerHTML="";
@@ -821,7 +819,7 @@ let cusps=Array.from({length:12},(_,i)=>i*30),angles=null;
 if(isFinite(lat)&&isFinite(lon)){angles=localAngles(new Date(),lat,lon);cusps=houseCusps(angles.asc,system);let ca=document.getElementById("chartAngles");if(ca)ca.innerHTML=`<div class="angle-pill"><b>ASC</b><br>${fmtZodiac(angles.asc)}</div><div class="angle-pill"><b>MC</b><br>${fmtZodiac(angles.mc)}</div><div class="angle-pill"><b>DSC</b><br>${fmtZodiac(angles.desc)}</div><div class="angle-pill"><b>IC</b><br>${fmtZodiac(angles.ic)}</div>`}
 cusps.forEach((c,i)=>{let l=document.createElement("div");l.className="houseLine";l.style.transform=`rotate(${c}deg)`;l.title=`House ${i+1}: ${fmtZodiac(c)}`;wheel.appendChild(l)});
 let bodyMap=[["Sun","☉"],["Moon","☽"],["Mercury","☿"],["Venus","♀"],["Mars","♂"],["Jupiter","♃"],["Saturn","♄"],["Uranus","♅"],["Neptune","♆"],["Pluto","♇"]], rows=[];
-bodyMap.forEach(([name,g],idx)=>{let lon=null;if(typeof Astronomy!=="undefined"){try{lon=name==="Moon"?Astronomy.EclipticLongitude(Astronomy.Body.Moon,new Date()):Astronomy.EclipticLongitude(Astronomy.Body[name],new Date())}catch(e){try{let v=Astronomy.GeoVector(Astronomy.Body[name],new Date(),true);let ec=Astronomy.Ecliptic(v);lon=ec.elon}catch(_){}}}
+bodyMap.forEach(([name,g],idx)=>{let lon=null;if(typeof Astronomy!=="undefined"){try{lon=Astronomy.Ecliptic(Astronomy.GeoVector(Astronomy.Body[name],new Date(),true)).elon}catch(_){}}
 if(lon!=null&&isFinite(lon)){let size=wheel.clientWidth||310,center=size/2,r=size*.38+(idx%2)*size*.04,ang=(lon-90)*Math.PI/180,x=center+r*Math.cos(ang),y=center+r*Math.sin(ang),d=document.createElement("div");d.className="planetdot";d.style.left=x+"px";d.style.top=y+"px";d.title=name+" "+lon.toFixed(1)+"°";d.textContent=g;wheel.appendChild(d);rows.push(`<p><b>${g} ${name}</b> — ${zodiacName(lon)} ${((((lon%30)+30)%30)).toFixed(1)}°</p>`)}});
 if(!rows.length)rows.push("<p>Live planetary calculations need an internet connection the first time this file loads so its astronomy library can load.</p>");document.getElementById("planetTable").innerHTML=rows.join("")}
 
@@ -843,30 +841,40 @@ function renderNatalTransitSummary(n){let el=document.getElementById("natalTrans
 function detectBirthTimezone(){let z=Intl.DateTimeFormat().resolvedOptions().timeZone||"";let el=document.getElementById("birthTimezone");if(el){el.value=z;localStorage.setItem("cw-birth-timezone",z)}}
 function birthDateUTC(){
  let d=(document.getElementById("birthDate")||{}).value||localStorage.getItem("cw-birth-date"),t=(document.getElementById("birthTime")||{}).value||localStorage.getItem("cw-birth-time")||"12:00",off=parseFloat((document.getElementById("birthOffset")||{}).value||localStorage.getItem("cw-birth-offset")||"0");
- if(!d)return null;let [Y,M,D]=d.split("-").map(Number),[h,m]=t.split(":").map(Number),zone=(document.getElementById("birthTimezone")||{}).value||localStorage.getItem("cw-birth-timezone")||"";if(zone){let guess=new Date(Date.UTC(Y,M-1,D,h,m||0));let zoff=offsetForZone(guess,zone);if(zoff!=null){let corrected=new Date(Date.UTC(Y,M-1,D,h-zoff,m||0));let zoff2=offsetForZone(corrected,zone);if(zoff2!=null)return new Date(Date.UTC(Y,M-1,D,h-zoff2,m||0))}}return new Date(Date.UTC(Y,M-1,D,h-off,m||0));
+ if(!d)return null;let [Y,M,D]=d.split("-").map(Number),[h,m]=t.split(":").map(Number),zone=(document.getElementById("birthTimezone")||{}).value||localStorage.getItem("cw-birth-timezone")||"";
+ // Subtract offsets from the timestamp; Date.UTC's hour argument truncates fractions.
+ let wallUTC=Date.UTC(Y,M-1,D,h,m||0);
+ if(zone){let guess=new Date(wallUTC),zoff=offsetForZone(guess,zone);if(zoff!=null){let corrected=new Date(wallUTC-zoff*3600000),zoff2=offsetForZone(corrected,zone);if(zoff2!=null)return new Date(wallUTC-zoff2*3600000)}}return new Date(wallUTC-off*3600000);
 }
 function planetLongitudes(date){
  let bodyMap=[["Sun","☉"],["Moon","☽"],["Mercury","☿"],["Venus","♀"],["Mars","♂"],["Jupiter","♃"],["Saturn","♄"],["Uranus","♅"],["Neptune","♆"],["Pluto","♇"]],out=[];
- if(typeof Astronomy==="undefined")return out;bodyMap.forEach(([name,g])=>{let lon=null;try{lon=Astronomy.EclipticLongitude(Astronomy.Body[name],date)}catch(e){try{let v=Astronomy.GeoVector(Astronomy.Body[name],date,true);lon=Astronomy.Ecliptic(v).elon}catch(_){}}
+ if(typeof Astronomy==="undefined")return out;bodyMap.forEach(([name,g])=>{let lon=null;try{lon=Astronomy.Ecliptic(Astronomy.GeoVector(Astronomy.Body[name],date,true)).elon}catch(_){}
  if(lon!=null&&isFinite(lon))out.push({name,g,lon:norm360(lon)})});return out;
 }
 function houseOfLongitude(lon,cusps){
- for(let i=0;i<12;i++){let a=cusps[i],b=cusps[(i+1)%12],span=norm360(b-a),rel=norm360(lon-a);if(rel<span||Math.abs(rel-span)<.0001)return i+1}return 1;
+ // Include this cusp, not the next. Tiny snapping handles equivalent ±360° representations.
+ for(let i=0;i<12;i++){let rel=norm360(lon-cusps[i]);if(rel<1e-10||360-rel<1e-10)return i+1}
+ for(let i=0;i<12;i++){let a=cusps[i],b=cusps[(i+1)%12],span=norm360(b-a),rel=norm360(lon-a);if(rel<span)return i+1}return 1;
 }
 function getNatal(){
- let date=birthDateUTC(),lat=parseFloat(localStorage.getItem("cw-birth-lat")),lon=parseFloat(localStorage.getItem("cw-birth-lon")),system=localStorage.getItem("cw-birth-house")||"whole";
- if(!date||!isFinite(lat)||!isFinite(lon))return null;
- if(window.CelestialNatalEngine){let chart=CelestialNatalEngine.calculate({date,lat,lon,houseSystem:system});if(chart)return {date,lat,lon,system,ang:chart.angles,cusps:chart.cusps,pls:chart.planets.map(p=>({name:p.name,g:p.glyph,lon:p.longitude,retro:p.retrograde,house:p.house})),aspects:chart.aspects,engine:chart}}
- let ang=localAngles(date,lat,lon),cusps=houseCusps(ang.asc,system),pls=planetLongitudes(date);return {date,lat,lon,system,ang,cusps,pls,aspects:[]};
+ let date=birthDateUTC(),lat=localStorage.getItem("cw-birth-lat"),lon=localStorage.getItem("cw-birth-lon"),system=localStorage.getItem("cw-birth-house")??"whole";
+ // Do not turn engine rejection or a missing dependency into a partial fallback chart.
+ if(!date||!window.CelestialNatalEngine||typeof window.CelestialNatalEngine.calculate!=="function")return null;
+ let chart=window.CelestialNatalEngine.calculate({date,lat,lon,houseSystem:system});if(!chart)return null;
+ return {date,lat:chart.latitude,lon:chart.longitude,system,ang:chart.angles,cusps:chart.cusps,pls:chart.planets.map(p=>({name:p.name,g:p.glyph,lon:p.longitude,retro:p.retrograde,house:p.house})),aspects:chart.aspects,engine:chart};
+}
+function natalUnavailableMessage(){
+ if(!window.CelestialNatalEngine||typeof window.CelestialNatalEngine.calculate!=="function"||typeof Astronomy==="undefined"||!Astronomy||!Astronomy.Body||typeof Astronomy.GeoVector!=="function"||typeof Astronomy.Ecliptic!=="function")return "The chart calculation library is unavailable. Reconnect to the internet and reload the app. Your saved birth details have not been removed.";
+ return "A complete chart could not be calculated. Check your birth date, timezone, latitude (-90 to 90), longitude (-180 to 180), and supported house system. If these are correct, reload the app and retry.";
 }
 function renderNatalDiagnostics(){
- let el=document.getElementById("natalDiagnostics"),n=getNatal();if(!el)return;if(!n){el.innerHTML="<p>Save complete birth data to inspect calculations.</p>";return}
+ let el=document.getElementById("natalDiagnostics"),n=getNatal();if(!el)return;if(!n){el.innerHTML="<p>"+esc(natalUnavailableMessage())+"</p>";return}
  let asp=n.aspects||[];el.innerHTML='<div class="eyebrow">Engine diagnostic · '+esc(n.engine?n.engine.version:"fallback")+'</div><h3>Calculated Chart Data</h3><p><b>ASC</b> '+fmtZodiac(n.ang.asc)+' · <b>MC</b> '+fmtZodiac(n.ang.mc)+' · <b>House system</b> '+esc(n.system)+'</p><details><summary>House cusps</summary>'+n.cusps.map((x,i)=>'<p>House '+(i+1)+': '+fmtZodiac(x)+'</p>').join("")+'</details><details><summary>Planet positions & retrogrades</summary>'+n.pls.map(p=>'<p>'+p.g+' '+p.name+': '+fmtZodiac(p.lon)+' · House '+houseOfLongitude(p.lon,n.cusps)+(p.retro?" · ℞ retrograde":"")+'</p>').join("")+'</details><details><summary>Major aspects ('+asp.length+')</summary>'+(asp.length?asp.map(a=>'<p>'+a.glyph1+' '+a.planet1+' '+a.name+' '+a.glyph2+' '+a.planet2+' · orb '+a.orb.toFixed(2)+'°</p>').join(""):'<p>No major aspects within default orbs.</p>')+'</details>';
 }
-function saveProfile(){bind();["profile-name","birth-date","birth-time","birth-place","birth-lat","birth-lon","birth-timezone","birth-offset","birth-house"].forEach(k=>{let el=document.querySelector(`[data-save="${k}"]`);if(el)localStorage.setItem("cw-"+k,el.value)});let n=getNatal();renderNatalSnapshot();renderNatalDiagnostics();renderPersonalDashboard();if(n){localStorage.setItem("cw-natal-recalc-note","Natal chart recalculated using "+(localStorage.getItem("cw-birth-time")||"saved birth time"));show("natal")}else{let s=document.getElementById("birthPlaceStatus");if(s)s.innerHTML+='<br><span class="status-bad">Chart could not be generated. Check birth date, coordinates and timezone.</span>'}}
+function saveProfile(){bind();["profile-name","birth-date","birth-time","birth-place","birth-lat","birth-lon","birth-timezone","birth-offset","birth-house"].forEach(k=>{let el=document.querySelector(`[data-save="${k}"]`);if(el)localStorage.setItem("cw-"+k,el.value)});let n=getNatal();renderNatalSnapshot();renderNatalDiagnostics();renderPersonalDashboard();if(n){localStorage.setItem("cw-natal-recalc-note","Natal chart recalculated using "+(localStorage.getItem("cw-birth-time")||"saved birth time"));show("natal")}else{let s=document.getElementById("birthPlaceStatus");if(s)s.innerHTML+='<br><span class="status-bad">'+esc(natalUnavailableMessage())+'</span>'}}
 function renderNatalSnapshot(){
  let el=document.getElementById("natalSnapshot");if(!el)return;let n=getNatal();
- if(!n){el.innerHTML="<h3>Natal Snapshot</h3><p>Add birth date/time, coordinates and UTC offset above to generate your saved chart snapshot.</p>";return}
+ if(!n){el.innerHTML="<h3>Natal Snapshot</h3><p>"+esc(natalUnavailableMessage())+"</p>";return}
  let name=localStorage.getItem("cw-profile-name")||"Your",place=localStorage.getItem("cw-birth-place")||"birthplace";
  el.innerHTML=`<div class="eyebrow">${esc(name)}'s natal chart</div><h2>Natal Snapshot</h2><p>${esc(place)} · ASC ${fmtZodiac(n.ang.asc)} · MC ${fmtZodiac(n.ang.mc)}</p><div class="natal-grid">`+
  n.pls.map(p=>`<div class="natal-item"><b>${p.g} ${p.name}</b><br>${fmtZodiac(p.lon)}<br><span class="mini">House ${houseOfLongitude(p.lon,n.cusps)}</span></div>`).join("")+`</div>`;
