@@ -660,6 +660,14 @@ body:has(#moon.active) main::before{
  mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%);
 }
 #moon>h1,#moon>.eyebrow{color:#351c36;text-shadow:0 1px 2px #fffaf8,0 0 8px #fffaf8}
+/* Moon Temple heading and card spacing match the Home design. */
+#moon.active{display:grid;gap:16px}
+#moon>h1{font-family:"Brush Script MT","Segoe Script","Snell Roundhand","URW Chancery L",cursive;font-style:normal;font-weight:500;letter-spacing:.015em;font-size:clamp(3rem,11vw,4.8rem);line-height:.92;text-align:center;margin:0 0 12px}
+#moon>.eyebrow{text-align:center;letter-spacing:.18em;font-weight:600}
+#moon>.grid{gap:16px;align-items:start}
+#moon>section{margin:0}
+#moon .card{border:1px solid rgba(193,151,91,.72);border-radius:18px;background:rgba(255,250,248,.94);box-shadow:inset 0 0 0 3px rgba(255,255,255,.72),inset 0 0 0 4px rgba(215,190,151,.34),0 5px 16px rgba(103,40,79,.08)}
+@media(max-width:520px){#moon.active,#moon>.grid{gap:14px}}
 /* Realistic Home background */
 body:has(#home.active) main{
  background-color:#fff8f7!important;
