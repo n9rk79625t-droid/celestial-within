@@ -634,6 +634,11 @@ body:has(#today.active) main{
 #today .today-settings-card summary{color:#67284f!important}
 @media(max-width:520px){#today.today-dashboard{padding-left:12px!important;padding-right:12px!important}#today .today-dashboard-stack>.card{padding:18px 16px!important}}
 
+/* Fit the live wheel to its card, not the viewport. */
+#today #astroWheel{width:min(100%,560px);height:auto;max-height:none;aspect-ratio:1;box-sizing:border-box;margin:18px auto 24px}
+#today #astroWheel .planetdot{box-sizing:border-box;z-index:2;margin:0;transform:translate(-50%,-50%);line-height:1}
+#today #astroWheel .planet-guide{position:absolute;height:1px;transform-origin:left center;background:#a0785580;pointer-events:none;z-index:1}
+#today .today-chart-card>p.mini{color:#6e4966!important}
 /* Realistic Home background */
 body:has(#home.active) main{
  background-color:#fff8f7!important;
@@ -835,6 +840,26 @@ function houseCusps(asc,system){
  for(let i=0;i<12;i++)c.push(norm360(base+i*30));return c;
 }
 function fmtZodiac(lon){let s=signs[Math.floor(norm360(lon)/30)][1],d=norm360(lon)%30;return `${s} ${d.toFixed(1)}°`}
+// Move labels only: the guide anchors and calculated longitudes stay exact.
+function layoutSkyPlanets(planets,size,dotSize){
+ const center=size/2,placed=[],gap=dotSize+5;
+ for(const p of planets){
+  const angle=(p.lon-90)*Math.PI/180,anchorX=center+size*.4*Math.cos(angle),anchorY=center+size*.4*Math.sin(angle);
+  let best=null,bestScore=Infinity;
+  for(const radius of [.4,.28,.16])for(let shift=-180;shift<=180;shift+=5){
+   const a=angle+shift*Math.PI/180,x=center+size*radius*Math.cos(a),y=center+size*radius*Math.sin(a),score=(x-anchorX)**2+(y-anchorY)**2;
+   if(score<bestScore&&placed.every(q=>Math.hypot(x-q.x,y-q.y)>=gap)){best={...p,x,y,anchorX,anchorY};bestScore=score}
+  }
+  if(!best)throw new Error("Unable to space live chart labels");
+  placed.push(best);
+ }
+ return placed;
+}
+function observeSkyWheel(){if(typeof ResizeObserver!=="undefined"){
+ let skyWidth=0;
+ new ResizeObserver(entries=>{let width=entries[0].contentRect.width;if(width>0&&Math.abs(width-skyWidth)>.5){skyWidth=width;if(document.getElementById("today").classList.contains("active"))renderSky()}}).observe(document.getElementById("astroWheel"));
+}}
+observeSkyWheel();
 let deferredInstallPrompt=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;});
 async function installApp(){if(deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null}else{alert("On iPhone/iPad: open the Share menu in Safari and choose Add to Home Screen. On supported Android browsers, use the browser Install or Add to Home Screen option.")}}
@@ -846,9 +871,15 @@ let lat=parseFloat(localStorage.getItem("cw-latitude")),lon=parseFloat(localStor
 let cusps=Array.from({length:12},(_,i)=>i*30),angles=null;
 if(isFinite(lat)&&isFinite(lon)){angles=localAngles(new Date(),lat,lon);cusps=houseCusps(angles.asc,system);let ca=document.getElementById("chartAngles");if(ca)ca.innerHTML=`<div class="angle-pill"><b>ASC</b><br>${fmtZodiac(angles.asc)}</div><div class="angle-pill"><b>MC</b><br>${fmtZodiac(angles.mc)}</div><div class="angle-pill"><b>DSC</b><br>${fmtZodiac(angles.desc)}</div><div class="angle-pill"><b>IC</b><br>${fmtZodiac(angles.ic)}</div>`}
 cusps.forEach((c,i)=>{let l=document.createElement("div");l.className="houseLine";l.style.transform=`rotate(${c}deg)`;l.title=`House ${i+1}: ${fmtZodiac(c)}`;wheel.appendChild(l)});
-let bodyMap=[["Sun","☉"],["Moon","☽"],["Mercury","☿"],["Venus","♀"],["Mars","♂"],["Jupiter","♃"],["Saturn","♄"],["Uranus","♅"],["Neptune","♆"],["Pluto","♇"]], rows=[];
+let bodyMap=[["Sun","☉"],["Moon","☽"],["Mercury","☿"],["Venus","♀"],["Mars","♂"],["Jupiter","♃"],["Saturn","♄"],["Uranus","♅"],["Neptune","♆"],["Pluto","♇"]], rows=[],planets=[];
 bodyMap.forEach(([name,g],idx)=>{let lon=null;if(typeof Astronomy!=="undefined"){try{lon=Astronomy.Ecliptic(Astronomy.GeoVector(Astronomy.Body[name],new Date(),true)).elon}catch(_){}}
-if(lon!=null&&isFinite(lon)){let size=wheel.clientWidth||310,center=size/2,r=size*.38+(idx%2)*size*.04,ang=(lon-90)*Math.PI/180,x=center+r*Math.cos(ang),y=center+r*Math.sin(ang),d=document.createElement("div");d.className="planetdot";d.style.left=x+"px";d.style.top=y+"px";d.title=name+" "+lon.toFixed(1)+"°";d.textContent=g;wheel.appendChild(d);rows.push(`<p><b>${g} ${name}</b> — ${zodiacName(lon)} ${((((lon%30)+30)%30)).toFixed(1)}°</p>`)}});
+if(lon!=null&&isFinite(lon)){planets.push({name,g,lon});rows.push(`<p><b>${g} ${name}</b> — ${zodiacName(lon)} ${((((lon%30)+30)%30)).toFixed(1)}°</p>`)}});
+let size=wheel.clientWidth||310,dotSize=Math.min(34,size*.105);
+layoutSkyPlanets(planets,size,dotSize).forEach(p=>{
+ let guide=document.createElement("div"),dx=p.x-p.anchorX,dy=p.y-p.anchorY;
+ guide.className="planet-guide";guide.style.left=p.anchorX+"px";guide.style.top=p.anchorY+"px";guide.style.width=Math.hypot(dx,dy)+"px";guide.style.transform="rotate("+Math.atan2(dy,dx)+"rad)";wheel.appendChild(guide);
+ let d=document.createElement("div");d.className="planetdot";d.style.left=p.x+"px";d.style.top=p.y+"px";d.style.width=dotSize+"px";d.style.height=dotSize+"px";d.style.fontSize=Math.min(17,dotSize*.55)+"px";d.title=p.name+" "+p.lon.toFixed(1)+"° · "+fmtZodiac(p.lon);d.setAttribute("aria-label",d.title);d.textContent=p.g;wheel.appendChild(d);
+});
 if(!rows.length)rows.push("<p>Live planetary calculations need an internet connection the first time this file loads so its astronomy library can load.</p>");document.getElementById("planetTable").innerHTML=rows.join("")}
 
 
