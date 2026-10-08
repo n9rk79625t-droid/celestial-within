@@ -25,3 +25,8 @@ test('wheel uses available card width and stays square and centered',()=>{
  assert.match(html,/#today #astroWheel\{width:min\(100%,560px\);height:auto;max-height:none;aspect-ratio:1;box-sizing:border-box;margin:18px auto 24px\}/);
  assert.match(html,/new ResizeObserver/);
 });
+
+test('Today’s Chart suppresses old pseudo-element artwork while keeping the approved border',()=>{
+ assert.match(html,/#today \.today-chart-card::before,#today \.today-chart-card::after\{content:none!important;display:none!important;background:none!important\}/);
+ assert.match(html,/background:#faf7ef url\("assets\/todays-chart-crystal-border-v1\.webp"\)/);
+});

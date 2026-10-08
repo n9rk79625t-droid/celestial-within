@@ -637,6 +637,8 @@ body:has(#today.active) main::before{
  background:#faf7ef url("assets/todays-chart-crystal-border-v1.webp") center / 100% 100% no-repeat!important;
  padding:clamp(62px,10vw,92px) clamp(28px,6vw,52px)!important;
 }
+/* The approved card artwork replaces the original placeholder decorations. */
+#today .today-chart-card::before,#today .today-chart-card::after{content:none!important;display:none!important;background:none!important}
 #today .today-reflection-card .btn.gold,#today .today-personal-card button{
  border-color:rgba(193,151,91,.72)!important;background:#fffaf8!important;color:#67284f!important;
 }
