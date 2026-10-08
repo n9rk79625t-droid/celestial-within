@@ -658,6 +658,20 @@ body:has(#home.active) main{
   mask-image:linear-gradient(to bottom,#000 0%,#000 65%,transparent 100%);
  }
 }
+/* Higher-contrast Home wording; preserve artwork, card framing and layout. */
+#home .home-title h1,#home .home-feature b,#home #personalGreeting h3,#home .profile-note-copy b{
+ color:#351c36!important;
+}
+#home .home-feature small,#home #personalGreeting p,#home #personalGreeting .mini,
+#home .profile-note-copy p,#home .profile-note-kicker,#home #personalGreeting .eyebrow,
+#home #personalGreeting button{
+ color:#503047!important;opacity:1!important;
+}
+#home .home-title .eyebrow,#home .home-motto p,#home .home-motto small{
+ color:#351c36!important;opacity:1!important;
+ text-shadow:0 1px 2px rgba(255,250,248,.98),0 0 8px rgba(255,250,248,.95)!important;
+}
+#home .home-title .eyebrow{font-weight:600!important}
 </style>
 </head>
 <body>
