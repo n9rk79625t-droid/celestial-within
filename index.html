@@ -644,6 +644,20 @@ body:has(#home.active) main{
  background-attachment:scroll!important;
 }
 #home .home-redesign{background:transparent!important;background-image:none!important}
+/* Mobile: show the full room width, then fade into the blush page below it. */
+@media(max-width:767px){
+ body:has(#home.active) main{
+  position:relative;isolation:isolate;
+  background-image:none!important;
+ }
+ body:has(#home.active) main::before{
+  content:"";position:absolute;top:0;left:0;width:100%;aspect-ratio:941 / 1672;
+  z-index:-1;pointer-events:none;
+  background:url("assets/F755389E-058E-4CD9-BDFF-DBDCDA64AD23.png") center top / 100% auto no-repeat;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 65%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0%,#000 65%,transparent 100%);
+ }
+}
 </style>
 </head>
 <body>
