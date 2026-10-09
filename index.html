@@ -13,7 +13,7 @@
 <script src="astrology-engine.js?v=20261008-calculations"></script>
 <script src="keepsake-books.js?v=20261009-books"></script>
 <script src="book-of-shadows-pdf.js?v=20261009-journal-options"></script>
-<script src="journal-pdf.js?v=20261009-celestial-cover"></script>
+<script src="journal-pdf.js?v=20261009-celestial-chapters"></script>
 <style>
 :root{--night:#130d20;--plum:#281539;--violet:#6f4a91;--pink:#d98ab3;--rose:#f0bfd5;--gold:#d8b56c;--gold2:#f1d99b;--cream:#fff9f0;--ink:#2b2030;--muted:#7d6c82;--card:rgba(255,250,247,.95);--line:rgba(216,181,108,.35)}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#3b2050 0,transparent 30%),radial-gradient(circle at 90% 20%,#4b2446 0,transparent 28%),var(--night);color:var(--cream);font-family:Inter,system-ui,sans-serif}
@@ -1252,7 +1252,7 @@ async function downloadShadowsPDF(){
 function buildDailyJournalBook(){
  const el=document.getElementById('dailyJournalPrint'),status=document.getElementById('dailyJournalBookStatus');
  try{const entries=KeepsakeBooks.journal(localStorage),chapters=JournalPDF.sections(entries);let html='<div class="journal-print-cover"><img src="assets/celestial-journal-star-chart-cover-v2.webp" alt="My Celestial Journal — printer-friendly celestial star chart cover"></div>';
- for(const chapter of chapters){html+='<div class="journal-month-divider"><img src="assets/journal-blush-chapter-v1.svg" alt=""><h1>'+esc(chapter.title)+'</h1></div>';html+=chapter.entries.map(x=>'<article class="book-entry"><div class="meta">'+esc(x.meta)+'</div><h3>'+esc(x.title)+'</h3><p>'+bookText(x.fields[0].text)+'</p></article>').join('')}
+ for(const chapter of chapters){html+='<div class="journal-month-divider"><img src="assets/celestial-journal-chapter-frame-v2.webp" alt=""><h1>'+esc(chapter.title)+'</h1></div>';html+=chapter.entries.map(x=>'<article class="book-entry"><div class="meta">'+esc(x.meta)+'</div><h3>'+esc(x.title)+'</h3><p>'+bookText(x.fields[0].text)+'</p></article>').join('')}
  el.innerHTML=html;status.textContent=entries.length+' saved entries included.';return true;
  }catch(e){el.innerHTML='';status.textContent='The journal could not be assembled. Stored entries are unchanged; printing is paused.';return false}
 }
