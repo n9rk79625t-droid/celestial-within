@@ -9,6 +9,6 @@
   }
   return Array.from(months,([month,items])=>({title:new Date(month+'-15T12:00:00').toLocaleDateString('en-US',{month:'long',year:'numeric'}),entries:items}));
  }
- async function create(entries,env){return root.ShadowsPDF.create(entries,env,{sections,cover:'assets/journal-blush-cover-v1.svg',frame:'assets/journal-blush-chapter-v1.svg'})}
+ async function create(entries,env){return root.ShadowsPDF.create(entries,env,{sections,cover:'assets/daily-journal-star-chart-cover-v1.webp',frame:'assets/journal-blush-chapter-v1.svg'})}
  root.JournalPDF={create,sections};if(typeof module!=='undefined')module.exports=root.JournalPDF;
 })(typeof globalThis!=='undefined'?globalThis:this);
