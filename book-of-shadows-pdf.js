@@ -54,8 +54,10 @@
   async function lines(text,size=11,bold=false){font(size,bold);const a=wrap(ctx,text,W-2*M);for(const text of a){if(y+size*1.45>H-M){await finish('entry');make();line('Continued',9);y+=8;font(size,bold)}ctx.fillText(text,M,y);y+=size*1.45}}
   make();const image=await env.image('assets/book-of-shadows-print-cover-v1.webp');const iw=image.naturalWidth||image.width,ih=image.naturalHeight||image.height;
   const ratio=Math.min((W-2*29)/iw,(H-2*29)/ih);ctx.drawImage(image,(W-iw*ratio)/2,(H-ih*ratio)/2,iw*ratio,ih*ratio);await finish('cover');
+  const frame=await env.image('assets/shadows-chapter-frame-v1.webp');
   for(const chapter of chapters){
-   make();ctx.strokeStyle='#c4a368';ctx.lineWidth=.8;ctx.strokeRect(M,M,W-2*M,H-2*M);ctx.textAlign='center';font(13);ctx.fillText('MY BOOK OF SHADOWS',W/2,245);font(34);ctx.fillText(chapter.title,W/2,320);font(13);ctx.fillText(chapter.subtitle,W/2,382);ctx.strokeStyle='#c4a368';ctx.beginPath();ctx.moveTo(185,427);ctx.lineTo(427,427);ctx.stroke();ctx.textAlign='left';await finish('chapter');
+   make();const fw=frame.naturalWidth||frame.width,fh=frame.naturalHeight||frame.height,fr=Math.min((W-2*29)/fw,(H-2*29)/fh);ctx.drawImage(frame,(W-fw*fr)/2,(H-fh*fr)/2,fw*fr,fh*fr);
+   ctx.textAlign='center';font(34);ctx.fillText(chapter.title,W/2,350);font(13);ctx.fillText(chapter.subtitle,W/2,405);ctx.textAlign='left';await finish('chapter');
    if(!chapter.entries.length)continue;
    make();
    for(const entry of chapter.entries){
