@@ -12,6 +12,7 @@
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
 <script src="astrology-engine.js?v=20261008-calculations"></script>
 <script src="keepsake-books.js?v=20261009-books"></script>
+<script src="book-of-shadows-pdf.js?v=20261009-letter"></script>
 <style>
 :root{--night:#130d20;--plum:#281539;--violet:#6f4a91;--pink:#d98ab3;--rose:#f0bfd5;--gold:#d8b56c;--gold2:#f1d99b;--cream:#fff9f0;--ink:#2b2030;--muted:#7d6c82;--card:rgba(255,250,247,.95);--line:rgba(216,181,108,.35)}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#3b2050 0,transparent 30%),radial-gradient(circle at 90% 20%,#4b2446 0,transparent 28%),var(--night);color:var(--cream);font-family:Inter,system-ui,sans-serif}
@@ -744,11 +745,13 @@ body:has(#wheel.active) main::before{
 #traditionsPrint .shadows-cover::before,#traditionsPrint .shadows-cover::after{content:none!important;display:none!important}
 #traditionsPrint .shadows-cover img{display:block;flex:1;min-height:0;width:100%;height:100%;object-fit:contain}
 #traditionsPrint::before,#traditionsPrint::after{content:none!important;display:none!important;margin:0!important;height:0!important}
+#traditionsPrint .section-divider{aspect-ratio:8.5 / 11;min-height:0;box-sizing:border-box}
+#shadowsPDFLink[hidden]{display:none!important}
 @media print{
  @page shadows{size:8.5in 11in;margin:0.4in}
  #traditionsPrint.print-target{page:shadows;width:7.7in!important;max-width:7.7in!important}
  #traditionsPrint .book-cover.shadows-cover{height:10.15in!important;max-height:10.15in!important;margin:0!important;border:0!important;padding:0!important;background:white!important;break-inside:avoid;page-break-inside:avoid;break-after:page;page-break-after:always}
- #traditionsPrint .section-divider{height:10.2in!important;max-height:10.2in!important;padding:.4in!important}
+ #traditionsPrint .section-divider{height:10.15in!important;max-height:10.15in!important;padding:.4in!important;margin:0!important;break-inside:avoid;page-break-inside:avoid}
  body{padding:0!important;background:white!important}
  body>header,.mobile-bottom,.recipe-modal{display:none!important}
  main{padding:0!important;margin:0!important;background:white!important;max-width:none!important}
@@ -888,7 +891,7 @@ body:has(#home.active) main{
 
 <div id="journalbook" class="panel"><div class="eyebrow">Printable journal</div><h1>My Celestial Journal Book</h1><div class="card"><p>Every saved daily, moon and tarot reflection appears here in date order. Drafts stay on their original pages until you save them.</p><button class="btn gold" onclick="buildJournalBook()">Refresh Journal</button><button class="btn" onclick="printSection('journalPrint')">Print / Save as PDF</button><p id="journalBookStatus" role="status"></p></div><section id="journalPrint" class="printbook"></section></div>
 
-<div id="traditionsbook" class="panel"><div class="eyebrow">Printable grimoire</div><h1>My Book of Shadows</h1><div class="card"><p>Your keepsake grimoire gathers saved celebrations, spells, rituals and traditions. Entries stay connected to their original archives. Print size: 8.5 × 11 inches (US Letter), with 0.4-inch margins. Select Letter paper and 100% scale. Turn off browser Headers and footers to remove its date and website address.</p><button class="btn gold" onclick="buildCelebrationsBook()">Refresh Book</button><button class="btn" onclick="printSection('traditionsPrint')">Print / Save as PDF</button><p id="grimoireBookStatus" role="status"></p></div><section id="traditionsPrint" class="printbook"></section></div>
+<div id="traditionsbook" class="panel"><div class="eyebrow">Printable grimoire</div><h1>My Book of Shadows</h1><div class="card"><p>Your keepsake grimoire gathers saved celebrations, spells, rituals and traditions. Entries stay connected to their original archives. Print size: 8.5 × 11 inches (US Letter), with 0.4-inch margins. Select Letter paper and 100% scale. Turn off browser Headers and footers to remove its date and website address.</p><button class="btn gold" onclick="buildCelebrationsBook()">Refresh Book</button><button class="btn gold" id="downloadShadowsButton" onclick="downloadShadowsPDF()">Prepare Full Book PDF</button><a id="shadowsPDFLink" class="btn" hidden target="_blank" rel="noopener">Save / Open PDF</a><button class="btn" onclick="printSection('traditionsPrint')">Browser Print</button><p id="grimoireBookStatus" role="status"></p></div><section id="traditionsPrint" class="printbook"></section></div>
 
 <div id="detail" class="panel"><button onclick="history.back();show(lastPanel)">← Back</button><div id="detailContent"></div></div>
 </main><div class="mobile-bottom">
@@ -1196,6 +1199,23 @@ function editTarotEntry(index){
  }catch(e){document.getElementById("tarotJournalStatus").textContent="The entry could not be opened. Stored data is unchanged."}
 }
 function renderTarotEntries(){let el=document.getElementById("tarotEntries");if(!el)return;try{let a=KeepsakeBooks.readTarot(localStorage);el.innerHTML=a.length?'<h3>Saved Tarot Entries</h3>'+a.map((x,i)=>'<article class="archive-item"><b>'+esc(x.d)+' · '+esc(x.card||"Tarot Reflection")+'</b><p>'+bookText(x.first)+'</p><p>'+bookText(x.journal)+'</p><p>'+bookText(x.meaning)+'</p><button onclick="editTarotEntry('+i+')">Edit entry</button></article>').join(""):'<p class="mini">Saved Tarot entries will appear here and in your printable journal.</p>'}catch(e){el.textContent="Saved Tarot entries could not be read. Stored data is unchanged."}}
+let shadowsPDFURL=null;
+async function downloadShadowsPDF(){
+ let status=document.getElementById("grimoireBookStatus"),button=document.getElementById("downloadShadowsButton"),link=document.getElementById("shadowsPDFLink");
+ button.disabled=true;link.hidden=true;status.textContent="Preparing your Book of Shadows PDF on this device…";
+ try{
+  const result=await ShadowsPDF.create(KeepsakeBooks.grimoire(localStorage),{
+   canvas:(width,height)=>{let c=document.createElement("canvas");c.width=width;c.height=height;return c},
+   image:src=>new Promise((resolve,reject)=>{let img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(Error("The cover image could not load. Reconnect and try again."));img.src=src}),
+   jpeg:canvas=>new Promise((resolve,reject)=>canvas.toBlob(async blob=>{if(!blob){reject(Error("A PDF page could not be created."));return}resolve(new Uint8Array(await blob.arrayBuffer()))},"image/jpeg",.92)),
+   yield:()=>new Promise(resolve=>setTimeout(resolve,0))
+  });
+  if(shadowsPDFURL)URL.revokeObjectURL(shadowsPDFURL);
+  shadowsPDFURL=URL.createObjectURL(new Blob([result.bytes],{type:"application/pdf"}));link.href=shadowsPDFURL;link.download="My-Book-of-Shadows.pdf";link.hidden=false;
+  status.textContent="Your "+result.pageKinds.length+"-page Letter-size PDF is ready. Tap Save / Open PDF. On iPhone, use Share → Save to Files, or print from the PDF. Saved entries are unchanged.";
+ }catch(e){status.textContent="The PDF could not be created. "+e.message+" Your saved entries are unchanged."}
+ finally{button.disabled=false}
+}
 async function printSection(id){
  if(id==="journalPrint"&&!buildJournalBook())return;
  if(id==="traditionsPrint"&&!buildCelebrationsBook())return;
