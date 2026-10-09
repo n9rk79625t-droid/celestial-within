@@ -687,12 +687,12 @@ body:has(#tarot.active) main::before{
 #tarot .card>h3:first-child{margin-top:4px}
 @media(min-width:760px){#tarot>.grid{grid-template-columns:repeat(2,minmax(0,1fr))}#tarot>.grid>.card:first-child{grid-row:span 2}}
 @media(max-width:520px){#tarot.active,#tarot>.grid{gap:14px}#tarot>.grid>.card{padding:18px}}
-/* Natal Chart: full-width celestial observatory with a gentle blush fade. */
+/* Natal Chart: full-width realistic sanctuary with a gentle blush fade. */
 body:has(#natal.active) main{position:relative;isolation:isolate;background-color:#fff8f7!important;background-image:none!important}
 body:has(#natal.active) main::before{
  content:"";position:absolute;top:0;left:0;width:100%;aspect-ratio:2 / 3;
  z-index:-1;pointer-events:none;
- background:url("assets/natal-chart-sanctuary-v1.webp") center top / 100% auto no-repeat;
+ background:url("assets/natal-chart-room-v1.webp") center top / 100% auto no-repeat;
  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%);
  mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%);
 }
