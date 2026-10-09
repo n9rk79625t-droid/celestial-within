@@ -8,10 +8,10 @@ test('tarot saves append new dated entries and edits replace the same entry',()=
 test('invalid dates and corrupt storage fail without changing existing entries',()=>{let s=storage({'cw-tarot-entries':'{bad'}),before=[...s.map];assert.throws(()=>books.saveTarot(s,{d:'2026-10-08',card:'Star'}));assert.deepEqual([...s.map],before);assert.throws(()=>books.saveTarot(storage(),{d:'2026-02-30',card:'Star'}));assert.throws(()=>books.journal(storage({'cw-calendar':{bad:true}})));assert.throws(()=>books.grimoire(storage({'cw-archive-moon':'oops'})))});
 test('failed writes do not erase existing Tarot entries',()=>{let s=fixture(),before=[...s.map];s.setItem=()=>{throw Error('Quota')};assert.throws(()=>books.saveTarot(s,{d:'2026-10-08',card:'Moon'}));assert.deepEqual([...s.map],before)});
 const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
-test('Book of Shadows prints on 8 by 10 paper and contains the uncropped cover',()=>{
- assert.match(html,/@page shadows\{size:8in 10in;margin:0\.4in\}/);
- assert.match(html,/#traditionsPrint\.print-target\{page:shadows;width:7\.2in!important/);
- assert.match(html,/#traditionsPrint \.book-cover\.shadows-cover\{height:9\.2in!important/);
+test('Book of Shadows prints on US Letter paper and contains the uncropped cover',()=>{
+ assert.match(html,/@page shadows\{size:8.5in 11in;margin:0\.4in\}/);
+ assert.match(html,/#traditionsPrint\.print-target\{page:shadows;width:7\.7in!important/);
+ assert.match(html,/#traditionsPrint \.book-cover\.shadows-cover\{height:10\.2in!important/);
  assert.match(html,/#traditionsPrint \.shadows-cover img\{[^}]*object-fit:contain/);
  assert.match(html,/await Promise\.all\(Array\.from\(el\.querySelectorAll\("img"\),img=>img\.decode\(\)\)\)/);
 });
