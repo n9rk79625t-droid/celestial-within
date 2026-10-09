@@ -736,11 +736,7 @@ body:has(#wheel.active) main::before{
 #wheel>.notice{background:rgba(255,250,248,.94);color:#603650}
 #wheel .card{background:rgba(255,250,248,.94)}
 #sabbatGrid{align-items:start}
-#sabbatGrid .samhain-card{display:block;width:100%;padding:0;overflow:hidden;background:#fff9f0;border-color:#c5a465;font:inherit;text-align:center}
-#sabbatGrid .samhain-card img{display:block;width:100%;height:auto}
-#sabbatGrid .samhain-card-copy{display:block;padding:14px 12px;color:#603650}
-#sabbatGrid .samhain-card-copy .mini{display:block;color:#603650}
-#sabbatGrid .samhain-card-copy p{margin:8px 0;line-height:1.45}
+#sabbatGrid .samhain-card{display:block;width:100%;padding:15px;overflow:hidden;background:#fffaf3 url("assets/samhain-card-frame-v1.webp") center / 100% 100% no-repeat;border-color:#c5a465;font:inherit;text-align:center;color:var(--ink)}
 #sabbatGrid .samhain-card:focus-visible{outline:3px solid #603650;outline-offset:3px}
 /* Realistic Home background */
 body:has(#home.active) main{
@@ -897,7 +893,7 @@ show("detail")}
 document.getElementById("signGrid").innerHTML=signs.map((x,i)=>`<div class="tile" onclick="detail('sign',${i})"><span style="font-size:1.7rem">${x[0]}</span><b>${x[1]}</b><span class="mini">${x[2]}</span></div>`).join("");
 document.getElementById("houseGrid").innerHTML=houses.map((x,i)=>`<div class="card"><div class="eyebrow">${x[0]} House</div><h3>${x[1]}</h3><p>${x[2]}</p><button onclick="detail('house',${i})">Reflect</button></div>`).join("");
 document.getElementById("planetGrid").innerHTML=planets.map((x,i)=>`<div class="card"><div style="font-size:2rem;color:#9b6a8e">${x[0]}</div><h3>${x[1]}</h3><p>${x[2]}</p><button onclick="detail('planet',${i})">Reflect</button></div>`).join("");
-document.getElementById("sabbatGrid").innerHTML=sabbats.map(x=>x[0]==="Samhain"?`<button type="button" class="tile wheel-link samhain-card" onclick="jumpToObservance('Samhain','Sabbat')"><img src="assets/samhain-celebration-card-v1.webp" alt="Samhain" width="1122" height="1402"><span class="samhain-card-copy"><span class="mini">${x[1]}</span><p>${x[2]}</p><span class="mini">Open journal section →</span></span></button>`:`<div class="tile wheel-link" onclick="jumpToObservance(\'${x[0]}\',\'Sabbat\')"><b>${x[0]}</b><span class="mini">${x[1]}</span><p>${x[2]}</p><span class="mini">Open journal section →</span></div>`).join("");
+document.getElementById("sabbatGrid").innerHTML=sabbats.map(x=>x[0]==="Samhain"?`<button type="button" class="tile wheel-link samhain-card" onclick="jumpToObservance('Samhain','Sabbat')"><b>${x[0]}</b><span class="mini">${x[1]}</span><p>${x[2]}</p><span class="mini">Open journal section →</span></button>`:`<div class="tile wheel-link" onclick="jumpToObservance(\'${x[0]}\',\'Sabbat\')"><b>${x[0]}</b><span class="mini">${x[1]}</span><p>${x[2]}</p><span class="mini">Open journal section →</span></div>`).join("");
 let celebrationTab="celebration",activeRecipeType="spell",editCelebrationIndex=null,editRecipeIndex=null,recipeSteps=[];
 const wheelOrder=["Samhain","Yule","Imbolc","Ostara","Beltane","Litha","Lughnasadh","Mabon"];
 function jumpToObservance(name,type){clearCelebrationForm();document.getElementById("obsName").value=name;document.getElementById("obsType").value=type||"Sabbat";document.getElementById("observanceFormTitle").textContent=name+" Celebration";document.getElementById("observanceEntry").scrollIntoView({behavior:"smooth",block:"start"});celebrationTab="celebration";renderCelebrationsArchive(name)}
