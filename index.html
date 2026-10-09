@@ -697,6 +697,15 @@ body:has(#natal.active) main::before{
  mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%);
 }
 #natal>h1,#natal>.eyebrow{color:#351c36;text-shadow:0 1px 2px #fffaf8,0 0 8px #fffaf8}
+/* Crystal frame surrounds the real natal wheel without placeholder overlays. */
+#natal .natal-hero{
+ background:#faf6ec url("assets/natal-chart-crystal-card-v1.webp") center / 100% 100% no-repeat!important;
+ border:1px solid rgba(193,151,91,.72)!important;border-radius:22px!important;
+ padding:clamp(56px,12vw,100px) clamp(16px,4vw,36px)!important;
+ box-shadow:0 7px 20px rgba(103,40,79,.1)!important;
+}
+#natal .natal-hero::before,#natal .natal-hero::after{content:none!important;display:none!important;background:none!important}
+#natal .natal-hero>.eyebrow{color:#552443;margin-bottom:12px}
 /* Realistic Home background */
 body:has(#home.active) main{
  background-color:#fff8f7!important;
