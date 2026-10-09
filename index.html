@@ -834,6 +834,14 @@ body:has(#home.active) main{
  #dailyJournalPrint .book-entry h3{break-after:avoid}
  #dailyJournalPrint .book-entry p{orphans:3;widows:3}
 }
+
+/* Daily Journal: calm modern retreat backdrop, excluded from print exports. */
+@media screen{
+ body:has(#calendar.active) main{position:relative;isolation:isolate;background-color:#fff8f3!important;background-image:none!important;min-height:100vh}
+ body:has(#calendar.active) main::before{content:"";position:absolute;top:0;left:0;width:100%;aspect-ratio:941 / 1672;z-index:-1;pointer-events:none;background:url("assets/daily-journal-modern-retreat-v1.webp") center top / 100% auto no-repeat;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 80%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0%,#000 80%,transparent 100%)}
+ #calendar>h1,#calendar>.eyebrow{color:#603650;text-shadow:0 1px 2px #fffaf5,0 0 12px #fffaf5}
+ #calendar>.card,#calendar>section.card,#calendar>section>.card{background:rgba(255,250,248,.94);border-color:rgba(197,164,101,.55)}
+}
 </style>
 </head>
 <body>
