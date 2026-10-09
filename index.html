@@ -808,6 +808,16 @@ body:has(#home.active) main{
  text-shadow:0 1px 2px rgba(255,250,248,.98),0 0 8px rgba(255,250,248,.95)!important;
 }
 #home .home-title .eyebrow{font-weight:600!important}
+
+/* Book of Shadows: botanical parchment backdrop for the app page. */
+@media screen{
+ body:has(#traditionsbook.active) main{position:relative;isolation:isolate;background-color:#f7eadb!important;background-image:none!important;min-height:100vh}
+ body:has(#traditionsbook.active) main::before{content:"";position:absolute;top:0;left:0;width:100%;aspect-ratio:1102 / 1427;z-index:-1;pointer-events:none;background:url("assets/book-of-shadows-botanical-background-v1.webp") center top / 100% auto no-repeat;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 80%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0%,#000 80%,transparent 100%)}
+ #traditionsbook{padding-top:clamp(80px,15vw,180px)}
+ #traditionsbook>h1,#traditionsbook>.eyebrow{color:#603650;text-shadow:0 1px 2px #fffaf5,0 0 12px #fffaf5}
+ #traditionsbook>.card{background:rgba(255,250,245,.94);border-color:#c5a465;max-width:900px;margin:0 auto}
+ #traditionsPrint{max-width:900px;margin:24px auto 0;background:rgba(255,250,245,.97)}
+}
 </style>
 </head>
 <body>
