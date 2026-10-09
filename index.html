@@ -706,6 +706,17 @@ body:has(#natal.active) main::before{
 }
 #natal .natal-hero::before,#natal .natal-hero::after{content:none!important;display:none!important;background:none!important}
 #natal .natal-hero>.eyebrow{color:#552443;margin-bottom:12px}
+/* Light natal-wheel palette; calculations and SVG coordinates are unchanged. */
+#natal .natal-wheel-svg>circle:first-child{fill:#fff9f1;stroke:#c5a465}
+#natal .natal-wheel-svg>circle[r="252"]{stroke:#d6bf92}
+#natal .natal-wheel-svg>circle[r="184"]{fill:#fbf4fa;stroke:#d6b6cb}
+#natal .natal-wheel-svg>circle[r="14"]{fill:#fffdfa;stroke:#c5a465}
+#natal .natal-wheel-svg text{fill:#603650}
+#natal .natal-wheel-svg text[font-size="24"]{fill:#92703c}
+#natal .natal-wheel-svg line[stroke="#d8b56c88"]{stroke:#d6bf92}
+#natal .natal-wheel-svg line[stroke="#f1d99b"]{stroke:#b99455}
+#natal .natal-wheel-svg line[stroke="#8f6aa0"]{stroke:#b59dc2}
+#natal .natal-wheel-svg line[stroke-opacity=".42"]{stroke-opacity:.65}
 /* Realistic Home background */
 body:has(#home.active) main{
  background-color:#fff8f7!important;
