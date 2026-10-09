@@ -44,17 +44,17 @@
   put('trailer\n<< /Size '+count+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF');
   const result=new Uint8Array(size);let pos=0;for(const chunk of chunks){result.set(chunk,pos);pos+=chunk.length}return result;
  }
- async function create(data,env){
-  const chapters=sections(data),pages=[],pageKinds=[];
+ async function create(data,env,options={}){
+  const chapters=options.sections?options.sections(data):sections(data),pages=[],pageKinds=[];
   let canvas,ctx,y;
   const make=()=>{canvas=env.canvas(W*SCALE,H*SCALE);ctx=canvas.getContext('2d');ctx.scale(SCALE,SCALE);ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);ctx.textBaseline='top';ctx.fillStyle='#453044';y=M};
   const finish=async(kind)=>{const bytes=await env.jpeg(canvas);pages.push({width:W*SCALE,height:H*SCALE,bytes});pageKinds.push(kind);await env.yield?.()};
   const font=(size,bold=false)=>{ctx.font=(bold?'bold ':'')+size+'px Georgia, serif';ctx.fillStyle='#453044'};
   const line=(text,size=11,bold=false)=>{font(size,bold);ctx.fillText(text,M,y);y+=size*1.45};
   async function lines(text,size=11,bold=false){font(size,bold);const a=wrap(ctx,text,W-2*M);for(const text of a){if(y+size*1.45>H-M){await finish('entry');make();line('Continued',9);y+=8;font(size,bold)}ctx.fillText(text,M,y);y+=size*1.45}}
-  make();const image=await env.image('assets/book-of-shadows-print-cover-v1.webp');const iw=image.naturalWidth||image.width,ih=image.naturalHeight||image.height;
+  make();const image=await env.image(options.cover||'assets/book-of-shadows-print-cover-v1.webp');const iw=image.naturalWidth||image.width,ih=image.naturalHeight||image.height;
   const ratio=Math.min((W-2*29)/iw,(H-2*29)/ih);ctx.drawImage(image,(W-iw*ratio)/2,(H-ih*ratio)/2,iw*ratio,ih*ratio);await finish('cover');
-  const frame=await env.image('assets/shadows-chapter-frame-v1.webp');
+  const frame=await env.image(options.frame||'assets/shadows-chapter-frame-v1.webp');
   for(const chapter of chapters){
    make();const fw=frame.naturalWidth||frame.width,fh=frame.naturalHeight||frame.height,fr=Math.min((W-2*29)/fw,(H-2*29)/fh);ctx.drawImage(frame,(W-fw*fr)/2,(H-fh*fr)/2,fw*fr,fh*fr);
    ctx.textAlign='center';ctx.font='42px "Snell Roundhand", "Brush Script MT", "Segoe Script", "Z003", cursive';ctx.fillStyle='#603650';ctx.fillText(chapter.title,W/2,365);ctx.textAlign='left';await finish('chapter');
@@ -72,3 +72,4 @@
  }
  root.ShadowsPDF={create,sections,wrap,imagePDF};if(typeof module!=='undefined')module.exports=root.ShadowsPDF;
 })(typeof globalThis!=='undefined'?globalThis:this);
+

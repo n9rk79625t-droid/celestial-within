@@ -12,7 +12,8 @@
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
 <script src="astrology-engine.js?v=20261008-calculations"></script>
 <script src="keepsake-books.js?v=20261009-books"></script>
-<script src="book-of-shadows-pdf.js?v=20261009-scriptchapters"></script>
+<script src="book-of-shadows-pdf.js?v=20261009-journal-options"></script>
+<script src="journal-pdf.js?v=20261009-journal"></script>
 <style>
 :root{--night:#130d20;--plum:#281539;--violet:#6f4a91;--pink:#d98ab3;--rose:#f0bfd5;--gold:#d8b56c;--gold2:#f1d99b;--cream:#fff9f0;--ink:#2b2030;--muted:#7d6c82;--card:rgba(255,250,247,.95);--line:rgba(216,181,108,.35)}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#3b2050 0,transparent 30%),radial-gradient(circle at 90% 20%,#4b2446 0,transparent 28%),var(--night);color:var(--cream);font-family:Inter,system-ui,sans-serif}
@@ -819,6 +820,20 @@ body:has(#home.active) main{
  #traditionsPrint{max-width:900px;margin:24px auto 0;background:rgba(255,250,245,.97)}
 }
 #home .home-feature-shadows .home-icon{display:grid!important;place-items:center!important;background:#fff!important;border-radius:50%!important}
+
+#journalPDFLink[hidden]{display:none!important}
+#dailyJournalPrint{background:#fffdfb;color:#453044}
+#dailyJournalPrint .journal-print-cover,#dailyJournalPrint .journal-month-divider{position:relative;aspect-ratio:8.5 / 11;padding:0;margin:0 0 24px;background:#fffdfb;border:0;box-shadow:none;overflow:hidden}
+#dailyJournalPrint .journal-print-cover img,#dailyJournalPrint .journal-month-divider img{display:block;width:100%;height:100%;object-fit:contain}
+#dailyJournalPrint .journal-month-divider h1{position:absolute;top:45%;left:10%;width:80%;text-align:center;color:#765c85;font-family:Georgia,serif;font-style:italic;font-size:clamp(1.7rem,7vw,3rem);margin:0}
+#dailyJournalPrint::before,#dailyJournalPrint::after{content:none!important;display:none!important}
+@media print{
+ @page dailyjournal{size:8.5in 11in;margin:0.4in}
+ #dailyJournalPrint.print-target{page:dailyjournal;width:7.7in!important;max-width:7.7in!important}
+ #dailyJournalPrint .journal-print-cover,#dailyJournalPrint .journal-month-divider{height:10.15in!important;max-height:10.15in!important;margin:0!important;break-inside:avoid;break-after:page;page-break-after:always}
+ #dailyJournalPrint .book-entry h3{break-after:avoid}
+ #dailyJournalPrint .book-entry p{orphans:3;widows:3}
+}
 </style>
 </head>
 <body>
@@ -831,7 +846,7 @@ body:has(#home.active) main{
   <div id="personalGreeting" class="home-profile-note"><div class="profile-note-copy"><b>Complete your Birth Profile</b><span class="profile-note-kicker">Personal sky note</span><p class="profile-note-personal">Once your profile is complete, your personal sky note will appear here.</p><button onclick="show('profile')">Create profile</button><p class="profile-note-help">Save your birth information to connect current transits with your natal houses.</p></div></div>
   <div class="home-feature-grid">
    <button class="home-feature home-feature-sky" onclick="show('today')"><span class="home-icon icon-sky">☉</span><span><b>Today’s Sky</b><small>Moon phase, transits &amp; more</small></span></button>
-   <button class="home-feature home-feature-journal" onclick="show('journal')"><span class="home-icon icon-journal">▤</span><span><b>My Journal</b><small>Daily reflections</small></span></button>
+   <button class="home-feature home-feature-journal" onclick="show('calendar')"><span class="home-icon icon-journal">▤</span><span><b>My Journal</b><small>Daily reflections</small></span></button>
    <button class="home-feature home-feature-natal" onclick="show('natal')"><span class="home-icon icon-natal">✧</span><span><b>Natal Chart</b><small>Your cosmic blueprint</small></span></button>
    <button class="home-feature home-feature-tarot" onclick="show('tarot')"><span class="home-icon icon-tarot">◇</span><span><b>Tarot</b><small>Insights &amp; guidance</small></span></button>
    <button class="home-feature home-feature-celebrations" onclick="show('wheel')"><span class="home-icon icon-celebrations">☾</span><span><b>Celebrations</b><small>Seasonal &amp; personal</small></span></button>
@@ -904,7 +919,7 @@ body:has(#home.active) main{
 
 <div id="calendar" class="panel"><div class="eyebrow">Everyday reflection</div><h1>My Celestial Journal</h1>
 <div class="card"><label>Entry date</label><input id="calendarDate" type="date"><label>Title</label><input id="calendarTitle" placeholder="A few words for this day"><label>Entry</label><textarea id="calendarText" placeholder="What would you like to remember?"></textarea><button class="btn gold" onclick="saveDailyEntry()">Save Daily Entry</button><button onclick="clearDailyForm()">Clear</button></div>
-<section><div class="card"><div class="section-head"><div><div class="eyebrow">Past entries</div><h2>My Celestial Journal Archive</h2></div></div><div id="calendarEntries"></div></div></section></div>
+<section><div class="card"><div class="section-head"><div><div class="eyebrow">Past entries</div><h2>My Celestial Journal Archive</h2></div></div><div id="calendarEntries"></div></div></section><section class="card"><h2>Your Printable Journal</h2><p>Saved daily, moon and tarot reflections, arranged by date with monthly dividers. Print size: 8.5 × 11 inches (US Letter), with 0.4-inch margins. Select Letter paper and 100% scale. Turn off browser Headers and footers.</p><button class="btn gold" onclick="buildDailyJournalBook()">Refresh Journal</button><button class="btn gold" id="downloadJournalButton" onclick="downloadJournalPDF()">Prepare Full Journal PDF</button><a id="journalPDFLink" class="btn" hidden target="_blank" rel="noopener">Save / Open PDF</a><button class="btn" onclick="printSection('dailyJournalPrint')">Browser Print</button><p id="dailyJournalBookStatus" role="status"></p></section><section id="dailyJournalPrint" class="printbook"></section></div>
 
 
 <div id="traditionsbook" class="panel"><div class="eyebrow">Printable grimoire</div><h1>My Book of Shadows</h1><div class="card"><p>Your keepsake grimoire gathers saved celebrations, spells, rituals and traditions. Entries stay connected to their original archives. Print size: 8.5 × 11 inches (US Letter), with 0.4-inch margins. Select Letter paper and 100% scale. Turn off browser Headers and footers to remove its date and website address.</p><button class="btn gold" onclick="buildCelebrationsBook()">Refresh Book</button><button class="btn gold" id="downloadShadowsButton" onclick="downloadShadowsPDF()">Prepare Full Book PDF</button><a id="shadowsPDFLink" class="btn" hidden target="_blank" rel="noopener">Save / Open PDF</a><button class="btn" onclick="printSection('traditionsPrint')">Browser Print</button><p id="grimoireBookStatus" role="status"></p></div><section id="traditionsPrint" class="printbook"></section></div>
@@ -927,7 +942,7 @@ const pages=[["Home","home"],["Profile","profile"],["Natal Chart","natal"],["Tod
 document.getElementById("nav").innerHTML=pages.map(x=>`<button onclick="show('${x[1]}')">${x[0]}</button>`).join("")+`<button id="menuInstallBtn" onclick="installApp();closeMenu()">Install App</button>`;
 function toggleMenu(){let n=document.getElementById("nav"),b=document.getElementById("menuToggle");if(!n)return;n.classList.toggle("open");if(b)b.setAttribute("aria-expanded",n.classList.contains("open")?"true":"false")}
 function closeMenu(){let n=document.getElementById("nav"),b=document.getElementById("menuToggle");if(n)n.classList.remove("open");if(b)b.setAttribute("aria-expanded","false")}
-function show(id){closeMenu();document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));let el=document.getElementById(id);if(el){el.classList.add("active");lastPanel=id;window.scrollTo(0,0)} if(id==="today")renderSky();if(id==="profile")renderNatalSnapshot();if(id==="natal")renderNatalPage();if(id==="calendar")renderCalendar();if(id==="tarot")renderTarotEntries();if(id==="home")renderPersonalDashboard();if(id==="moon")renderMoon();if(id==="traditionsbook")buildCelebrationsBook();if(id==="wheel")renderCelebrationsArchive();renderArchives();bind()}
+function show(id){closeMenu();document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));let el=document.getElementById(id);if(el){el.classList.add("active");lastPanel=id;window.scrollTo(0,0)} if(id==="today")renderSky();if(id==="profile")renderNatalSnapshot();if(id==="natal")renderNatalPage();if(id==="calendar"){renderCalendar();buildDailyJournalBook();}if(id==="tarot")renderTarotEntries();if(id==="home")renderPersonalDashboard();if(id==="moon")renderMoon();if(id==="traditionsbook")buildCelebrationsBook();if(id==="wheel")renderCelebrationsArchive();renderArchives();bind()}
 function detail(kind,i){let d;if(kind==="sign"){d=signs[i];document.getElementById("detailContent").innerHTML=`<div class="eyebrow">${d[0]} ${d[3]}</div><h1>${d[1]}</h1><div class="card"><h3>${d[2]}</h3><p>Explore where ${d[1]} appears in your natal chart by planet and house. Use the archetype as a question rather than a fixed label.</p><label>Where does this energy feel familiar?</label><textarea data-save="detail-${kind}-${i}-1"></textarea><label>Where does it challenge me?</label><textarea data-save="detail-${kind}-${i}-2"></textarea><label>What would a balanced expression look like?</label><textarea data-save="detail-${kind}-${i}-3"></textarea></div>`}
 if(kind==="house"){d=houses[i];document.getElementById("detailContent").innerHTML=`<div class="eyebrow">${d[0]} House</div><h1>${d[1]}</h1><div class="card"><p>${d[2]}</p><label>Planets/signs in this house</label><textarea data-save="detail-${kind}-${i}-1"></textarea><label>What life themes do I notice here?</label><textarea data-save="detail-${kind}-${i}-2"></textarea><label>Growth reflection</label><textarea data-save="detail-${kind}-${i}-3"></textarea></div>`}
 if(kind==="planet"){d=planets[i];document.getElementById("detailContent").innerHTML=`<div class="eyebrow">${d[0]} Planetary archetype</div><h1>${d[1]}</h1><div class="card"><h3>${d[2]}</h3><p>Reflect on your natal ${d[1]} by sign, house and aspects, and compare the symbolism with your lived experience.</p><label>My natal placement</label><input data-save="detail-${kind}-${i}-1"><label>How does this function express in me?</label><textarea data-save="detail-${kind}-${i}-2"></textarea><label>What am I learning about it?</label><textarea data-save="detail-${kind}-${i}-3"></textarea></div>`}
@@ -1225,10 +1240,33 @@ async function downloadShadowsPDF(){
  }catch(e){status.textContent="The PDF could not be created. "+e.message+" Your saved entries are unchanged."}
  finally{button.disabled=false}
 }
+
+function buildDailyJournalBook(){
+ const el=document.getElementById('dailyJournalPrint'),status=document.getElementById('dailyJournalBookStatus');
+ try{const entries=KeepsakeBooks.journal(localStorage),chapters=JournalPDF.sections(entries);let html='<div class="journal-print-cover"><img src="assets/journal-blush-cover-v1.svg" alt="My Celestial Journal — blush, lavender and gold cover"></div>';
+ for(const chapter of chapters){html+='<div class="journal-month-divider"><img src="assets/journal-blush-chapter-v1.svg" alt=""><h1>'+esc(chapter.title)+'</h1></div>';html+=chapter.entries.map(x=>'<article class="book-entry"><div class="meta">'+esc(x.meta)+'</div><h3>'+esc(x.title)+'</h3><p>'+bookText(x.fields[0].text)+'</p></article>').join('')}
+ el.innerHTML=html;status.textContent=entries.length+' saved entries included.';return true;
+ }catch(e){el.innerHTML='';status.textContent='The journal could not be assembled. Stored entries are unchanged; printing is paused.';return false}
+}
+let journalPDFURL=null;
+async function downloadJournalPDF(){
+ const status=document.getElementById('dailyJournalBookStatus'),button=document.getElementById('downloadJournalButton'),link=document.getElementById('journalPDFLink');
+ button.disabled=true;link.hidden=true;status.textContent='Preparing your journal PDF on this device…';
+ try{const result=await JournalPDF.create(KeepsakeBooks.journal(localStorage),{
+ canvas:(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c},
+ image:src=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(Error('The cover image could not load. Reconnect and try again.'));img.src=src}),
+ jpeg:canvas=>new Promise((resolve,reject)=>canvas.toBlob(async blob=>{if(!blob){reject(Error('A PDF page could not be created.'));return}resolve(new Uint8Array(await blob.arrayBuffer()))},'image/jpeg',.92)),
+ yield:()=>new Promise(resolve=>setTimeout(resolve,0))
+ });if(journalPDFURL)URL.revokeObjectURL(journalPDFURL);journalPDFURL=URL.createObjectURL(new Blob([result.bytes],{type:'application/pdf'}));link.href=journalPDFURL;link.download='My-Celestial-Journal.pdf';link.hidden=false;
+ status.textContent='Your '+result.pageKinds.length+'-page Letter-size PDF is ready. Tap Save / Open PDF. On iPhone, use Share → Save to Files, or print from the PDF.';
+ }catch(e){status.textContent='The PDF could not be created. '+e.message+' Your saved entries are unchanged.'}finally{button.disabled=false}
+}
+
 async function printSection(id){
+ if(id==="dailyJournalPrint"&&!buildDailyJournalBook())return;
  if(id==="traditionsPrint"&&!buildCelebrationsBook())return;
  let el=document.getElementById(id);if(!el)return;
- try{await Promise.all(Array.from(el.querySelectorAll("img"),img=>img.decode()))}catch(e){let status=document.getElementById("grimoireBookStatus");if(status)status.textContent="The cover image could not load. Printing is paused; reconnect and try again.";return}
+ try{await Promise.all(Array.from(el.querySelectorAll("img"),img=>img.decode()))}catch(e){let status=document.getElementById(id==="dailyJournalPrint"?"dailyJournalBookStatus":"grimoireBookStatus");if(status)status.textContent="The cover image could not load. Printing is paused; reconnect and try again.";return}
  let cleanup=()=>el.classList.remove("print-target");window.addEventListener("afterprint",cleanup,{once:true});
  el.classList.add("print-target");try{window.print()}catch(e){cleanup();window.removeEventListener("afterprint",cleanup);throw e}
 }
@@ -1236,3 +1274,4 @@ async function printSection(id){
 bind();renderTarotEntries();renderArchives();renderPersonalDashboard();startLunarRefresh();let cd=document.getElementById("calendarDate");if(cd)cd.value=new Date().toISOString().slice(0,10);
 </script>
 </body></html>
+
