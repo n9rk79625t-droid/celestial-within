@@ -16,6 +16,8 @@ test('Book of Shadows prints on US Letter paper and contains the uncropped cover
  assert.match(html,/#traditionsPrint::before,#traditionsPrint::after\{content:none!important;display:none!important/);
  assert.match(fn('shadowsCover'),/src="assets\/book-of-shadows-print-cover-v1\.webp"/);
  assert.doesNotMatch(fn('shadowsCover'),/cover-owner|cover-screen|new Date|book-of-shadows-cover-v1/);
+ assert.doesNotMatch(fn('shadowsDivider'),/<p>|subtitle/);
+ assert.match(html,/#traditionsPrint \.section-divider h1\{font-family:"Brush Script MT"/);
  assert.match(html,/await Promise\.all\(Array\.from\(el\.querySelectorAll\("img"\),img=>img\.decode\(\)\)\)/);
 });
 function fn(name){const start=html.indexOf('function '+name+'('),rest=html.slice(start),next=rest.slice(1).search(/\n(?:async )?function /);return next<0?rest:rest.slice(0,next+1)}

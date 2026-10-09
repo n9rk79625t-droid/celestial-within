@@ -57,7 +57,7 @@
   const frame=await env.image('assets/shadows-chapter-frame-v1.webp');
   for(const chapter of chapters){
    make();const fw=frame.naturalWidth||frame.width,fh=frame.naturalHeight||frame.height,fr=Math.min((W-2*29)/fw,(H-2*29)/fh);ctx.drawImage(frame,(W-fw*fr)/2,(H-fh*fr)/2,fw*fr,fh*fr);
-   ctx.textAlign='center';font(34);ctx.fillText(chapter.title,W/2,350);font(13);ctx.fillText(chapter.subtitle,W/2,405);ctx.textAlign='left';await finish('chapter');
+   ctx.textAlign='center';ctx.font='42px "Snell Roundhand", "Brush Script MT", "Segoe Script", "Z003", cursive';ctx.fillStyle='#603650';ctx.fillText(chapter.title,W/2,365);ctx.textAlign='left';await finish('chapter');
    if(!chapter.entries.length)continue;
    make();
    for(const entry of chapter.entries){
