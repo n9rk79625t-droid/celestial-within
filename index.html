@@ -721,6 +721,18 @@ body:has(#natal.active) main::before{
 #natal .natal-wheel-svg line[stroke="#f1d99b"]{stroke:#b99455}
 #natal .natal-wheel-svg line[stroke="#8f6aa0"]{stroke:#b59dc2}
 #natal .natal-wheel-svg line[stroke-opacity=".42"]{stroke-opacity:.65}
+/* Celebrations: full-width Midsummer garden, fading into the page color. */
+body:has(#wheel.active) main{position:relative;isolation:isolate;background-color:#fff8f7!important;background-image:none!important}
+body:has(#wheel.active) main::before{
+ content:"";position:absolute;top:0;left:0;width:100%;aspect-ratio:2 / 3;
+ z-index:-1;pointer-events:none;
+ background:url("assets/celebrations-midsummer-eve-v1.webp") center top / 100% auto no-repeat;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%);
+}
+#wheel>h1,#wheel>.eyebrow,#wheel>section>h2{color:#351c36;text-shadow:0 1px 2px #fffaf8,0 0 8px #fffaf8,0 0 16px #fffaf8}
+#wheel>.notice{background:rgba(255,250,248,.94);color:#603650}
+#wheel .card{background:rgba(255,250,248,.94)}
 /* Realistic Home background */
 body:has(#home.active) main{
  background-color:#fff8f7!important;
