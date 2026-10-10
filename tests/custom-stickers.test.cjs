@@ -39,8 +39,14 @@ test('clear decoration and delete buttons preserve writing and saved designs',()
  ids.clearStickerBoard.click();assert.equal(ctx.StickerJournal.get().length,0);assert.equal(JSON.parse(data)[0].deleted,undefined);assert.equal(ids.myStickerTray.children[0],group);ctx.StickerJournal.add('moon');group.children[1].click();assert.equal(ids.myStickerTray.children[0].textContent,'No saved designs yet.');assert.equal(JSON.parse(data)[0].deleted,true);assert.equal(ctx.StickerJournal.get().length,1);
 });
 test('all six herbal assets retain transparency and work in collages and printable entries',async()=>{
- const herbs=stickers.catalog.filter(c=>c.asset);assert.equal(herbs.length,6);
+ const herbs=stickers.catalog.filter(c=>c.group==='herbal');assert.equal(herbs.length,6);
  for(const herb of herbs){const img=await image(stickers.uri(herb.id)),c=createCanvas(img.width,img.height),ctx=c.getContext('2d');ctx.drawImage(img,0,0);assert.equal(ctx.getImageData(0,0,1,1).data[3],0);assert.ok(inline.markup(inline.token(herb.id)).includes(herb.asset));}
  let data='[]';const storage={getItem:()=>data,setItem:(k,v)=>{data=v}};stickers.set(herbs.map((h,i)=>({id:h.id,x:25+i*80,y:40,size:70})));const collage=await stickers.saveDesign('Herbal bouquet',environment(storage));assert.ok(collage.src.startsWith('data:image/png'));assert.deepEqual(stickers.get(),[]);
  const result=await journal.create([{d:'2026-10-10',source:'Daily',title:'Herbal reflection',text:herbs.map(h=>inline.token(h.id,64)).join('\n'),stickers:[{id:'herb-lavender',x:20,y:20,size:80}]}],{canvas:createCanvas,image,jpeg:c=>new Uint8Array(c.toBuffer('image/jpeg'))});const {PDFDocument}=require('pdf-lib');assert.ok((await PDFDocument.load(result.bytes)).getPageCount()>=3);
+});
+test('six crystal stickers retain transparency and export in mixed herbal collages and journal PDFs',async()=>{
+ const crystals=stickers.catalog.filter(c=>c.group==='crystal');assert.equal(crystals.length,6);
+ for(const crystal of crystals){const img=await image(stickers.uri(crystal.id)),c=createCanvas(img.width,img.height),ctx=c.getContext('2d');ctx.drawImage(img,0,0);assert.equal(ctx.getImageData(0,0,1,1).data[3],0);assert.ok(inline.markup(inline.token(crystal.id)).includes(crystal.asset));}
+ const design=[{id:'crystal-amethyst',x:30,y:30,size:90},{id:'herb-lavender',x:50,y:60,size:80},{id:'crystal-fluorite',x:100,y:40,size:70}];stickers.set(design);let data='[]';const storage={getItem:()=>data,setItem:(k,v)=>{data=v}};const collage=await stickers.saveDesign('Crystals and lavender',environment(storage));assert.ok(collage.src.startsWith('data:image/png'));assert.deepEqual(stickers.get(),[]);
+ const result=await journal.create([{d:'2026-10-10',source:'Daily',title:'Crystal reflection',text:crystals.map(c=>inline.token(c.id,64)).join('\n'),stickers:design}],{canvas:createCanvas,image,jpeg:c=>new Uint8Array(c.toBuffer('image/jpeg'))});const {PDFDocument}=require('pdf-lib');assert.ok((await PDFDocument.load(result.bytes)).getPageCount()>=3);
 });
