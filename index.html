@@ -849,14 +849,14 @@ body:has(#home.active) main{
 .sticker-collection{margin:16px 0;padding:12px;border:1px solid #d8b56c66;border-radius:14px;background:#fffaf8}
 .sticker-collection summary{cursor:pointer;color:#603650;font-weight:600}
 .sticker-tray{display:flex;gap:10px;flex-wrap:wrap}
-.sticker-choice{display:flex;flex-direction:column;align-items:center;gap:4px;background:#fff!important;color:#603650!important;border-radius:14px!important;font-size:.8rem}
+.sticker-choice{border:0!important;display:flex;flex-direction:column;align-items:center;gap:4px;background:#fff!important;color:#603650!important;border-radius:14px!important;font-size:.8rem}
 .sticker-choice img{width:54px;height:54px}
 .sticker-art{position:relative;width:100%;aspect-ratio:3 / 1;break-inside:avoid;page-break-inside:avoid;margin:12px 0;overflow:hidden}
 .sticker-art>img{position:absolute;aspect-ratio:1;object-fit:contain}
 .sticker-editor{border:1px dashed #c8accd;border-radius:12px;background:#fffdfb;min-height:0}
-.sticker-piece{position:absolute!important;aspect-ratio:1;padding:0!important;margin:0!important;background:transparent!important;border:2px solid transparent!important;border-radius:8px!important;touch-action:none;cursor:grab}
+.sticker-piece{position:absolute!important;aspect-ratio:1;padding:0!important;margin:0!important;background:transparent!important;border:0!important;border-radius:0!important;touch-action:none;cursor:grab}
 .sticker-piece img{display:block;width:100%;height:100%;pointer-events:none}
-.sticker-piece.selected,.sticker-piece:focus-visible{border-color:#936fa6!important;outline:none}
+.sticker-piece.selected,.sticker-piece:focus-visible{opacity:.8;outline:none}
 #stickerControls[hidden]{display:none!important}
 #stickerSize{padding:0;max-width:260px;min-height:36px}
 
@@ -864,9 +864,9 @@ body:has(#home.active) main{
 .journal-rich-editor{min-height:240px;max-height:650px;overflow:auto;padding:12px 13px;border:1px solid #ded2df;border-radius:11px;background:white;color:#2b2030;font:inherit;font-size:1rem;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
 .journal-rich-editor:empty::before{content:attr(data-placeholder);color:#7d6c82;pointer-events:none}
 .journal-rich-editor:focus{outline:2px solid #c8accd;outline-offset:2px}
-.inline-sticker-piece{display:inline-block;vertical-align:middle;line-height:0;border:2px solid transparent;border-radius:8px;cursor:pointer;white-space:normal}
+.inline-sticker-piece{display:inline-block;vertical-align:middle;line-height:0;border:0;border-radius:0;cursor:pointer;white-space:normal}
 .inline-sticker-piece img{display:block;object-fit:contain}
-.inline-sticker-piece.selected{border-color:#936fa6}
+.inline-sticker-piece.selected{opacity:.8}
 .inline-journal-sticker{display:inline-block;vertical-align:middle;object-fit:contain;max-width:100%}
 #inlineStickerSize{padding:0;max-width:260px;min-height:36px}
 </style>
