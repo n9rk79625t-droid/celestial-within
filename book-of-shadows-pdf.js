@@ -64,6 +64,7 @@
     if(y>H-M-100){await finish('entry');make()}
     await lines(entry.title,18,true);await lines(entry.meta,9);y+=10;
     for(const field of entry.fields){if(!field.text.trim())continue;if(y>H-M-45){await finish('entry');make()}await lines(field.label,11,true);await lines(field.text);y+=10}
+    if(entry.stickers?.length&&options.drawDecorations){const height=options.decorationHeight(W-2*M);if(y+height>H-M){await finish('entry');make();await lines(entry.title+' · stickers',12,true);y+=10}await options.drawDecorations(entry,ctx,M,y,W-2*M);y+=height+10}
     y+=14;
    }
    await finish('entry');
@@ -72,4 +73,3 @@
  }
  root.ShadowsPDF={create,sections,wrap,imagePDF};if(typeof module!=='undefined')module.exports=root.ShadowsPDF;
 })(typeof globalThis!=='undefined'?globalThis:this);
-
