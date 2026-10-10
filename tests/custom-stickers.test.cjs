@@ -19,3 +19,22 @@ test('custom PNG stickers appear in exported journal pages',async()=>{
  const item=stickers.catalog.find(c=>c.src),text='Before\n'+inline.token(item.id,90)+'\nAfter';const {PDFDocument}=require('pdf-lib');let drawn=false;
  const result=await journal.create([{d:'2026-10-10',source:'Daily',title:'My collage',text}],{canvas:(w,h)=>{const c=createCanvas(w,h),ctx=c.getContext('2d'),draw=ctx.drawImage.bind(ctx);ctx.drawImage=(img,x,y,w,h)=>{if(w===90&&h===90)drawn=true;return draw(img,x,y,w,h)};return c},image:src=>src.startsWith('data:')?image(src):loadImage(path.join(__dirname,'../',src)),jpeg:c=>new Uint8Array(c.toBuffer('image/jpeg'))});assert.ok(drawn);const pdf=await PDFDocument.load(result.bytes);assert.equal(pdf.getPageCount(),3);
 });
+test('refresh loads new designs and deletion persists without breaking existing entries',()=>{
+ const src=stickers.catalog.find(c=>c.src).src,item={id:'custom-refresh-test',name:'Refreshed design',src};let data=JSON.stringify([item]);const storage={getItem:()=>data,setItem:(k,v)=>{data=v}};
+ assert.equal(stickers.refreshCollection(storage)[0].id,item.id);assert.equal(stickers.uri(item.id),src);
+ const token=inline.token(item.id,72);assert.equal(stickers.deleteDesign(item.id,storage),true);assert.equal(stickers.refreshCollection(storage).length,0);assert.equal(JSON.parse(data)[0].deleted,true);assert.equal(stickers.uri(item.id),src);assert.ok(inline.markup(token).includes(src));
+ const reload={localStorage:storage};vm.createContext(reload);vm.runInContext(fs.readFileSync(path.join(__dirname,'../journal-stickers.js'),'utf8'),reload);assert.equal(reload.StickerJournal.uri(item.id),src);assert.equal(reload.StickerJournal.catalog.find(c=>c.id===item.id).deleted,true);assert.equal(reload.StickerJournal.normalize([{id:item.id,x:0,y:0,size:72}])[0].id,item.id);
+ assert.equal(stickers.deleteDesign('moon',storage),false);
+});
+test('failed deletes and invalid refreshes do not hide a saved sticker',()=>{
+ const item={id:'custom-failure-test',name:'Keep me',src:stickers.catalog.find(c=>c.src).src};const data=JSON.stringify([item]),storage={getItem:()=>data,setItem:()=>{throw Error('Unavailable')}};stickers.refreshCollection(storage);
+ assert.throws(()=>stickers.deleteDesign(item.id,storage),/could not be deleted/);assert.ok(!stickers.catalog.find(c=>c.id===item.id).deleted);
+ assert.throws(()=>stickers.refreshCollection({getItem:()=>'{broken'}));assert.ok(!stickers.catalog.find(c=>c.id===item.id).deleted);
+});
+test('refresh and delete buttons update the visible collection without clearing the draft',()=>{
+ class Element{constructor(){this.children=[];this.events={};this.style={};this.classList={toggle(){}}}append(...n){this.children.push(...n)}set innerHTML(v){this.children=[]}addEventListener(n,f){this.events[n]=f}setAttribute(){}click(){this.events.click?.()}}
+ const ids=Object.fromEntries(['stickerBoard','stickerStatus','stickerControls','stickerSize','stickerTray','myStickerTray','refreshStickers','removeSticker'].map(k=>[k,new Element()]));let data='[]';const storage={getItem:()=>data,setItem:(k,v)=>{data=v}},ctx={localStorage:storage,document:{getElementById:k=>ids[k],createElement:()=>new Element(),createTextNode:s=>s}};
+ vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(__dirname,'../journal-stickers.js'),'utf8'),ctx);ctx.StickerJournal.mount();ctx.StickerJournal.add('moon');
+ data=JSON.stringify([{id:'custom-ui-test',name:'UI design',src:stickers.catalog.find(c=>c.src).src}]);ids.refreshStickers.click();const group=ids.myStickerTray.children[0];assert.equal(group.children[1].textContent,'Delete');assert.equal(ctx.StickerJournal.get().length,1);
+ group.children[1].click();assert.equal(ids.myStickerTray.children[0].textContent,'No saved designs yet.');assert.equal(JSON.parse(data)[0].deleted,true);assert.equal(ctx.StickerJournal.get().length,1);
+});
