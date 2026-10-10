@@ -22,7 +22,7 @@ test('tray selection, pointer movement, size control, removal and keyboard movem
   addEventListener(n,f){(this.events[n]??=[]).push(f)}removeEventListener(n,f){this.events[n]=(this.events[n]||[]).filter(x=>x!==f)}
   dispatch(n,e={}){for(const f of [...(this.events[n]||[])])f(e)}
   setAttribute(){}focus(){}setPointerCapture(){}querySelectorAll(){return this.children}
-  getBoundingClientRect(){return {width:300,height:100}}
+  getBoundingClientRect(){return {width:300,height:100,left:0,top:0}}
  }
  const ids=Object.fromEntries(['stickerBoard','stickerStatus','stickerControls','stickerSize','stickerTray','removeSticker'].map(k=>[k,new Element()]));
  const ctx={document:{getElementById:k=>ids[k],createElement:()=>new Element(),createTextNode:s=>s}};vm.createContext(ctx);vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../journal-stickers.js'),'utf8'),ctx);ctx.StickerJournal.mount();
@@ -31,6 +31,14 @@ test('tray selection, pointer movement, size control, removal and keyboard movem
  ids.stickerSize.value='100';ids.stickerSize.dispatch('input');assert.equal(ctx.StickerJournal.get()[0].size,100);assert.equal(ctx.StickerJournal.get()[0].y,100);
  ids.stickerBoard.children[0].dispatch('keydown',{key:'ArrowLeft',preventDefault(){}});assert.equal(ctx.StickerJournal.get()[0].x,90);
  ids.removeSticker.dispatch('click');assert.equal(ctx.StickerJournal.get().length,0);assert.equal(ids.stickerControls.hidden,true);
+ const data={'application/x-celestial-sticker':'crystal','application/x-celestial-sticker-size':'80'},transfer={getData:k=>data[k]||'',setData:(k,v)=>{data[k]=v},effectAllowed:'move'};
+ let moved=false;ctx.InlineStickers={finishMove:()=>{moved=true}};
+ ids.stickerBoard.dispatch('dragover',{preventDefault(){},dataTransfer:transfer});assert.equal(transfer.dropEffect,'move');
+ ids.stickerBoard.dispatch('drop',{preventDefault(){},dataTransfer:transfer,clientX:250,clientY:90});assert.equal(moved,true);assert.equal(ctx.StickerJournal.get()[0].id,'crystal');assert.equal(ctx.StickerJournal.get()[0].x,460);assert.equal(ctx.StickerJournal.get()[0].y,120);assert.equal(ctx.StickerJournal.get()[0].size,80);
+ ids.stickerTray.children[0].dispatch('dragstart',{dataTransfer:transfer});assert.equal(data['application/x-celestial-sticker'],'moon');
+ ids.stickerBoard.dispatch('paste',{preventDefault(){},clipboardData:{getData:k=>k==='text/plain'?ctx.StickerJournal.uri('star'):''}});assert.equal(ctx.StickerJournal.get()[1].id,'star');
+ ctx.StickerJournal.set(Array(24).fill({id:'moon',x:0,y:0,size:56}));moved=false;ids.stickerBoard.dispatch('drop',{preventDefault(){},dataTransfer:transfer,clientX:20,clientY:20});assert.equal(ctx.StickerJournal.get().length,24);assert.equal(moved,false);
+
 });
 test('saving, reopening, and a failed save retain decorations and existing data',()=>{
  const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');const code=html.slice(html.indexOf('let editDailyIndex=null;'),html.indexOf('\nfunction deleteDaily('));
