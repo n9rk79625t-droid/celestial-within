@@ -26,7 +26,7 @@ test('tray selection, pointer movement, size control, removal and keyboard movem
  }
  const ids=Object.fromEntries(['stickerBoard','stickerStatus','stickerControls','stickerSize','stickerTray','removeSticker'].map(k=>[k,new Element()]));
  const ctx={document:{getElementById:k=>ids[k],createElement:()=>new Element(),createTextNode:s=>s}};vm.createContext(ctx);vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../journal-stickers.js'),'utf8'),ctx);ctx.StickerJournal.mount();
- ids.stickerTray.children[0].dispatch('click');assert.equal(ctx.StickerJournal.get().length,1);
+ let inserted;ctx.InlineStickers={insert:id=>{inserted=id;return true}};ids.stickerTray.children[0].dispatch('click');assert.equal(inserted,'moon');assert.equal(ctx.StickerJournal.get().length,0);ctx.StickerJournal.add('moon');assert.equal(ctx.StickerJournal.get().length,1);
  const b=ids.stickerBoard.children[0];b.dispatch('pointerdown',{clientX:0,clientY:0,pointerId:1,preventDefault(){}});b.dispatch('pointermove',{clientX:30,clientY:20});b.dispatch('pointerup');assert.equal(ctx.StickerJournal.get()[0].x,95);assert.equal(ctx.StickerJournal.get()[0].y,110);
  ids.stickerSize.value='100';ids.stickerSize.dispatch('input');assert.equal(ctx.StickerJournal.get()[0].size,100);assert.equal(ctx.StickerJournal.get()[0].y,100);
  ids.stickerBoard.children[0].dispatch('keydown',{key:'ArrowLeft',preventDefault(){}});assert.equal(ctx.StickerJournal.get()[0].x,90);
