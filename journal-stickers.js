@@ -47,7 +47,7 @@
  }
  function uri(id){const c=catalog.find(c=>c.id===id);if(!c)throw Error('Unknown sticker');if(c.src)return c.src;if(c.asset)return c.asset;return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">'+c.art+'</svg>')}
  function markup(list){const a=normalize(list);return a.length?'<div class="sticker-art" aria-label="Journal stickers">'+a.map(s=>'<img alt="'+escape(catalog.find(c=>c.id===s.id).name)+'" src="'+uri(s.id)+'" style="left:'+s.x/6+'%;top:'+s.y/2+'%;width:'+s.size/6+'%">').join('')+'</div>':''}
- let draft=[],selected=-1,board,status,controls,sizeInput;
+ let draft=[],selected=-1,board,status,controls,sizeInput,forwardButton,backwardButton;
  function report(text){if(status)status.textContent=text}
  function get(){return normalize(draft)}
  function set(list){draft=normalize(list);selected=-1;render()}
@@ -59,7 +59,11 @@
    b.addEventListener('keydown',e=>{const delta={ArrowLeft:[-5,0],ArrowRight:[5,0],ArrowUp:[0,-5],ArrowDown:[0,5]}[e.key];if(!delta)return;e.preventDefault();selected=i;s.x=clamp(s.x+delta[0],0,600-s.size);s.y=clamp(s.y+delta[1],0,200-s.size);b.style.left=s.x/6+'%';b.style.top=s.y/2+'%';updateControls()});
   });updateControls();
  }
- function updateControls(){if(!controls)return;controls.hidden=selected<0;sizeInput.value=selected>=0?draft[selected].size:56}
+ function updateControls(){if(!controls)return;controls.hidden=selected<0;sizeInput.value=selected>=0?draft[selected].size:56;if(forwardButton)forwardButton.disabled=selected<0||selected===draft.length-1;if(backwardButton)backwardButton.disabled=selected<=0}
+ function moveLayer(step){
+  const next=selected+step;if(selected<0||next<0||next>=draft.length)return false;
+  [draft[selected],draft[next]]=[draft[next],draft[selected]];selected=next;render();report(step>0?'Sticker brought forward. Save your entry or design to keep the order.':'Sticker sent backward. Save your entry or design to keep the order.');return true;
+ }
  function add(id,x,y,size=56){
   if(!catalog.some(c=>c.id===id))return false;
   if(draft.length>=24){report('You can add up to 24 stickers per entry.');return false}
@@ -76,6 +80,7 @@
   board.addEventListener('dragover',e=>{e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect=e.dataTransfer.effectAllowed==='move'?'move':'copy'});
   board.addEventListener('drop',e=>{e.preventDefault();const item=transfer(e.dataTransfer),rect=board.getBoundingClientRect();if(add(item.id,(e.clientX-rect.left)*600/rect.width-item.size/2,(e.clientY-rect.top)*200/rect.height-item.size/2,item.size))root.InlineStickers?.finishMove()});
   board.tabIndex=0;board.addEventListener('paste',e=>{const item=transfer(e.clipboardData);if(item.id){e.preventDefault();add(item.id,300-item.size/2,100-item.size/2,item.size)}});
+  forwardButton=document.getElementById('bringStickerForward');backwardButton=document.getElementById('sendStickerBackward');forwardButton?.addEventListener('click',()=>moveLayer(1));backwardButton?.addEventListener('click',()=>moveLayer(-1));
   renderTray();
   document.getElementById('clearStickerBoard')?.addEventListener('click',()=>{set([]);report('Decoration area cleared. Your writing and saved stickers are unchanged.')});
   const saveButton=document.getElementById('saveStickerDesign');saveButton?.addEventListener('click',async()=>{saveButton.disabled=true;report('Saving your design…');try{const item=await saveDesign(document.getElementById('stickerDesignName').value);document.getElementById('stickerDesignName').value='';report(item.name+' saved in My Stickers. The decoration area is ready for a new design. Select your saved sticker to add it to your writing.')}catch(e){report(e.message)}finally{saveButton.disabled=false}});

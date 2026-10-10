@@ -24,7 +24,7 @@ test('tray selection, pointer movement, size control, removal and keyboard movem
   setAttribute(){}focus(){}setPointerCapture(){}querySelectorAll(){return this.children}
   getBoundingClientRect(){return {width:300,height:100,left:0,top:0}}
  }
- const ids=Object.fromEntries(['stickerBoard','stickerStatus','stickerControls','stickerSize','stickerTray','removeSticker'].map(k=>[k,new Element()]));
+ const ids=Object.fromEntries(['stickerBoard','stickerStatus','stickerControls','stickerSize','stickerTray','removeSticker','bringStickerForward','sendStickerBackward'].map(k=>[k,new Element()]));
  const ctx={document:{getElementById:k=>ids[k],createElement:()=>new Element(),createTextNode:s=>s}};vm.createContext(ctx);vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../journal-stickers.js'),'utf8'),ctx);ctx.StickerJournal.mount();
  let inserted;ctx.InlineStickers={insert:id=>{inserted=id;return true}};ids.stickerTray.children[0].dispatch('click');assert.equal(inserted,'moon');assert.equal(ctx.StickerJournal.get().length,0);ctx.StickerJournal.add('moon');assert.equal(ctx.StickerJournal.get().length,1);
  const b=ids.stickerBoard.children[0];b.dispatch('pointerdown',{clientX:0,clientY:0,pointerId:1,preventDefault(){}});b.dispatch('pointermove',{clientX:30,clientY:20});b.dispatch('pointerup');assert.equal(ctx.StickerJournal.get()[0].x,95);assert.equal(ctx.StickerJournal.get()[0].y,110);
@@ -38,6 +38,15 @@ test('tray selection, pointer movement, size control, removal and keyboard movem
  ids.stickerTray.children[0].dispatch('dragstart',{dataTransfer:transfer});assert.equal(data['application/x-celestial-sticker'],'moon');
  ids.stickerBoard.dispatch('paste',{preventDefault(){},clipboardData:{getData:k=>k==='text/plain'?ctx.StickerJournal.uri('star'):''}});assert.equal(ctx.StickerJournal.get()[1].id,'star');
  ctx.StickerJournal.set(Array(24).fill({id:'moon',x:0,y:0,size:56}));moved=false;ids.stickerBoard.dispatch('drop',{preventDefault(){},dataTransfer:transfer,clientX:20,clientY:20});assert.equal(ctx.StickerJournal.get().length,24);assert.equal(moved,false);
+ ctx.StickerJournal.set([{id:'moon',x:40,y:30,size:60},{id:'star',x:40,y:30,size:80},{id:'crystal',x:40,y:30,size:70}]);
+ assert.equal(ids.bringStickerForward.disabled,true);assert.equal(ids.sendStickerBackward.disabled,true);
+ ids.stickerBoard.children[0].dispatch('click');assert.equal(ids.sendStickerBackward.disabled,true);assert.equal(ids.bringStickerForward.disabled,false);
+ ids.bringStickerForward.dispatch('click');assert.deepEqual(Array.from(ctx.StickerJournal.get(),s=>s.id),['star','moon','crystal']);assert.equal(ids.stickerSize.value,60);
+ ids.bringStickerForward.dispatch('click');assert.deepEqual(Array.from(ctx.StickerJournal.get(),s=>s.id),['star','crystal','moon']);assert.equal(ids.bringStickerForward.disabled,true);
+ ids.bringStickerForward.dispatch('click');assert.deepEqual(Array.from(ctx.StickerJournal.get(),s=>s.id),['star','crystal','moon']);
+ ids.sendStickerBackward.dispatch('click');assert.deepEqual(Array.from(ctx.StickerJournal.get(),s=>s.id),['star','moon','crystal']);assert.equal(ids.stickerSize.value,60);
+ const saved=JSON.parse(JSON.stringify(ctx.StickerJournal.get()));ctx.StickerJournal.set(saved);assert.deepEqual(Array.from(ctx.StickerJournal.get(),s=>s.id),['star','moon','crystal']);assert.equal(ids.stickerBoard.children[1].style.width,'10%');
+ assert.deepEqual(books.journal(storage(JSON.stringify([{d:'2026-10-10',title:'Layered',text:'',stickers:saved}])))[0].stickers,saved);
 
 });
 test('saving, reopening, and a failed save retain decorations and existing data',()=>{
