@@ -63,3 +63,10 @@ test('broom stickers retain transparent backgrounds and work in saved collages a
  const result=await journal.create([{d:'2026-10-12',source:'Daily',title:'Broom design',text:brooms.map(b=>inline.token(b.id,64)).join('\n'),stickers:design}],{canvas:createCanvas,image,jpeg:c=>new Uint8Array(c.toBuffer('image/jpeg'))});const {PDFDocument}=require('pdf-lib');assert.ok((await PDFDocument.load(result.bytes)).getPageCount()>=3);
  const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');assert.ok(html.includes('<details class="sticker-group"><summary>Broom Collection</summary>'));assert.ok(html.includes('id="broomStickerTray"'));
 });
+test('flower stickers retain transparent backgrounds and work in saved collages and PDFs',async()=>{
+ const flowers=stickers.catalog.filter(c=>c.group==='flower');assert.equal(flowers.length,6);
+ for(const flower of flowers){const img=await image(stickers.uri(flower.id)),c=createCanvas(img.width,img.height),ctx=c.getContext('2d');ctx.drawImage(img,0,0);assert.equal(ctx.getImageData(0,0,1,1).data[3],0);assert.ok(inline.markup(inline.token(flower.id)).includes(flower.asset));}
+ const design=[{id:'jar-corked',x:50,y:20,size:100},{id:'flower-rose',x:70,y:60,size:50},{id:'flower-forget-me-not',x:100,y:90,size:40}];stickers.set(design);let data='[]';const storage={getItem:()=>data,setItem:(k,v)=>{data=v}};const collage=await stickers.saveDesign('Flower jar',environment(storage));assert.ok(collage.src.startsWith('data:image/png'));assert.deepEqual(stickers.get(),[]);
+ const result=await journal.create([{d:'2026-10-12',source:'Daily',title:'Flower design',text:flowers.map(f=>inline.token(f.id,64)).join('\n'),stickers:design}],{canvas:createCanvas,image,jpeg:c=>new Uint8Array(c.toBuffer('image/jpeg'))});const {PDFDocument}=require('pdf-lib');assert.ok((await PDFDocument.load(result.bytes)).getPageCount()>=3);
+ const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');assert.ok(html.includes('<details class="sticker-group"><summary>Flower Collection</summary>'));assert.ok(html.includes('id="flowerStickerTray"'));
+});
