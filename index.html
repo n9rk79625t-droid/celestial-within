@@ -871,6 +871,15 @@ body:has(#home.active) main{
 .inline-journal-sticker{display:inline-block;vertical-align:middle;object-fit:contain;max-width:100%}
 #inlineStickerSize{padding:0;max-width:260px;min-height:36px}
 .saved-sticker{display:flex;flex-direction:column;align-items:stretch;gap:4px}.delete-saved-sticker{font-size:.8rem;padding:4px 8px}.save-sticker-design{margin:12px 0;padding:12px;background:#fffaf8;border-radius:12px}.save-sticker-design input{max-width:320px;margin:0 8px 8px 0}
+
+/* Through the Signs: full-width sanctuary artwork with a soft scrolling fade. */
+@media screen{
+ body:has(#signs.active) main{position:relative;isolation:isolate;background-color:#fff8f7!important;background-image:none!important;min-height:100vh}
+ body:has(#signs.active) main::before{content:"";position:absolute;top:0;left:0;width:100%;aspect-ratio:940 / 1672;z-index:-1;pointer-events:none;background:url("assets/through-signs-celestial-sanctuary-v1.webp") center top / 100% auto no-repeat;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 80%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0%,#000 80%,transparent 100%)}
+ #signs>h1,#signs>.eyebrow{color:#603650;text-shadow:0 1px 2px #fffaf5,0 0 12px #fffaf5}
+ #signs #signGrid{margin-top:24px}
+ #signs .tile{background:rgba(255,250,248,.94);border-color:rgba(197,164,101,.65)}
+}
 </style>
 </head>
 <body>
