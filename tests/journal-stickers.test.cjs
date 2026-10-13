@@ -26,7 +26,7 @@ test('tray selection, pointer movement, size control, removal and keyboard movem
  }
  const ids=Object.fromEntries(['stickerBoard','stickerStatus','stickerControls','stickerSize','stickerTray','removeSticker','bringStickerForward','sendStickerBackward'].map(k=>[k,new Element()]));
  const ctx={document:{getElementById:k=>ids[k],createElement:()=>new Element(),createTextNode:s=>s}};vm.createContext(ctx);vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../journal-stickers.js'),'utf8'),ctx);ctx.StickerJournal.mount();
- let inserted;ctx.InlineStickers={insert:id=>{inserted=id;return true}};ids.stickerTray.children[0].dispatch('click');assert.equal(inserted,'moon');assert.equal(ctx.StickerJournal.get().length,0);ctx.StickerJournal.add('moon');assert.equal(ctx.StickerJournal.get().length,1);
+ let inserted;ctx.InlineStickers={insert:id=>{inserted=id;return true}};ids.stickerTray.children[0].children[0].dispatch('click');assert.equal(inserted,'moon');assert.equal(ctx.StickerJournal.get().length,0);ids.stickerTray.children[0].children[1].dispatch('click');assert.equal(ctx.StickerJournal.get().length,1);assert.equal(ids.stickerTray.children[0].children[1].textContent,'Added to Decoration');assert.equal(inserted,'moon');
  const b=ids.stickerBoard.children[0];b.dispatch('pointerdown',{clientX:0,clientY:0,pointerId:1,preventDefault(){}});b.dispatch('pointermove',{clientX:30,clientY:20});b.dispatch('pointerup');assert.equal(ctx.StickerJournal.get()[0].x,95);assert.equal(ctx.StickerJournal.get()[0].y,110);
  ids.stickerSize.value='100';ids.stickerSize.dispatch('input');assert.equal(ctx.StickerJournal.get()[0].size,100);assert.equal(ctx.StickerJournal.get()[0].y,100);
  ids.stickerBoard.children[0].dispatch('keydown',{key:'ArrowLeft',preventDefault(){}});assert.equal(ctx.StickerJournal.get()[0].x,90);
@@ -35,9 +35,9 @@ test('tray selection, pointer movement, size control, removal and keyboard movem
  let moved=false;ctx.InlineStickers={finishMove:()=>{moved=true}};
  ids.stickerBoard.dispatch('dragover',{preventDefault(){},dataTransfer:transfer});assert.equal(transfer.dropEffect,'move');
  ids.stickerBoard.dispatch('drop',{preventDefault(){},dataTransfer:transfer,clientX:250,clientY:90});assert.equal(moved,true);assert.equal(ctx.StickerJournal.get()[0].id,'crystal');assert.equal(ctx.StickerJournal.get()[0].x,460);assert.equal(ctx.StickerJournal.get()[0].y,120);assert.equal(ctx.StickerJournal.get()[0].size,80);
- ids.stickerTray.children[0].dispatch('dragstart',{dataTransfer:transfer});assert.equal(data['application/x-celestial-sticker'],'moon');
+ ids.stickerTray.children[0].children[0].dispatch('dragstart',{dataTransfer:transfer});assert.equal(data['application/x-celestial-sticker'],'moon');
  ids.stickerBoard.dispatch('paste',{preventDefault(){},clipboardData:{getData:k=>k==='text/plain'?ctx.StickerJournal.uri('star'):''}});assert.equal(ctx.StickerJournal.get()[1].id,'star');
- ctx.StickerJournal.set(Array(24).fill({id:'moon',x:0,y:0,size:56}));moved=false;ids.stickerBoard.dispatch('drop',{preventDefault(){},dataTransfer:transfer,clientX:20,clientY:20});assert.equal(ctx.StickerJournal.get().length,24);assert.equal(moved,false);
+ ctx.StickerJournal.set(Array(24).fill({id:'moon',x:0,y:0,size:56}));moved=false;ids.stickerBoard.dispatch('drop',{preventDefault(){},dataTransfer:transfer,clientX:20,clientY:20});assert.equal(ctx.StickerJournal.get().length,24);assert.equal(moved,false);ids.stickerTray.children[0].children[1].dispatch('click');assert.equal(ctx.StickerJournal.get().length,24);
  ctx.StickerJournal.set([{id:'moon',x:40,y:30,size:60},{id:'star',x:40,y:30,size:80},{id:'crystal',x:40,y:30,size:70}]);
  assert.equal(ids.bringStickerForward.disabled,true);assert.equal(ids.sendStickerBackward.disabled,true);
  ids.stickerBoard.children[0].dispatch('click');assert.equal(ids.sendStickerBackward.disabled,true);assert.equal(ids.bringStickerForward.disabled,false);
