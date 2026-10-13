@@ -900,6 +900,14 @@ body:has(#home.active) main{
  #planets #planetGrid{margin-top:24px}
  #planets .card{background:rgba(255,250,248,.94);border-color:rgba(197,164,101,.65)}
 }
+/* Keep iOS's native date control inside the journal card at a single-row height. */
+@media screen{
+ #calendar,#calendar>.card{min-width:0;max-width:100%;box-sizing:border-box}
+ #calendar #calendarDate,#calendar #calendarTitle{display:block;box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:100%!important;height:48px!important;min-height:48px!important;max-height:48px!important;padding:0 13px!important;font-size:16px;line-height:normal}
+ #calendar #calendarDate{-webkit-appearance:none;appearance:none;overflow:hidden;text-align:left}
+ #calendar #calendarDate::-webkit-date-and-time-value{display:flex;align-items:center;height:100%;min-width:0;margin:0;padding:0;text-align:left}
+ #calendar #calendarDate::-webkit-datetime-edit{min-width:0;padding:0}
+}
 </style>
 </head>
 <body>
